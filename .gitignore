@@ -1,0 +1,41 @@
+# Environment files and local secrets
+**/.env
+**/.env.*
+!**/.env.example
+
+# Dependencies
+**/node_modules/
+**/vendor/
+
+# Build outputs
+**/dist/
+**/dist-ssr/
+**/public/build/
+**/public/hot
+**/public/storage/
+
+# Laravel local/runtime files
+**/storage/*.key
+**/storage/pail/
+**/.phpunit.result.cache
+**/.phpunit.cache/
+
+# Logs and local reports
+**/*.log
+summary.html
+summary.json
+
+# Local agent notes and legacy nested backend copy
+**/.agent/
+TechZone-Electro-Store-main/Backend TechZone/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

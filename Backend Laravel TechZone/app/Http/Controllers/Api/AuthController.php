@@ -1,0 +1,74 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
+
+class AuthController extends Controller
+{
+    public function register(Request $request)
+    {
+        $data = $request->validate([
+            'fullName' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:6'],
+            'phone' => ['nullable', 'string', 'max:40'],
+        ]);
+
+        $user = User::create([
+            'name' => $data['fullName'],
+            'full_name' => $data['fullName'],
+            'username' => $data['fullName'],
+            'email' => $data['email'],
+            'phone' => $data['phone'] ?? null,
+            'role' => 'user',
+            'points' => 200,
+            'password' => Hash::make($data['password']),
+        ]);
+
+        return $this->authResponse($user);
+    }
+
+    public function login(Request $request)
+    {
+        $data = $request->validate([
+            'email' => ['required', 'string'],
+            'password' => ['required', 'string'],
+        ]);
+
+        $login = $data['email'];
+
+        $user = User::query()
+            ->where('email', $login)
+            ->orWhere('username', $login)
+            ->when($login === 'admin', fn ($query) => $query->orWhere('role', 'admin'))
+            ->first();
+
+        if (! $user || ! Hash::check($data['password'], $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['Email ou mot de passe incorrect.'],
+            ]);
+        }
+
+        return $this->authResponse($user);
+    }
+
+    public function me(Request $request)
+    {
+        $user = User::first();
+
+        return $user?->toFrontendArray();
+    }
+
+    private function authResponse(User $user): array
+    {
+        return [
+            'token' => 'local-token-'.$user->id,
+            'user' => $user->toFrontendArray(),
+        ];
+    }
+}

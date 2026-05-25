@@ -71,3 +71,39 @@ The script generates:
 - Frontend: Cloudflare Pages or Vercel
 - Backend: Koyeb free web service
 - Database: Neon free PostgreSQL
+
+## Deployment Notes
+
+Backend deployment settings for Koyeb:
+
+```text
+Root directory: Backend Laravel TechZone
+Builder: Dockerfile
+Dockerfile: Dockerfile
+Port: 8000
+```
+
+Recommended backend environment variables:
+
+```env
+APP_NAME=TechZone
+APP_ENV=production
+APP_DEBUG=false
+APP_KEY=base64:generate-this-key-locally
+APP_URL=https://your-koyeb-app.koyeb.app
+FRONTEND_URLS=https://your-frontend-domain.pages.dev
+
+DB_CONNECTION=pgsql
+DB_HOST=your-neon-host
+DB_PORT=5432
+DB_DATABASE=your-neon-database
+DB_USERNAME=your-neon-user
+DB_PASSWORD=your-neon-password
+
+SESSION_DRIVER=database
+QUEUE_CONNECTION=database
+CACHE_STORE=database
+RUN_SEEDERS=true
+```
+
+Set `RUN_SEEDERS=true` only for the first deploy if you want demo products and demo users.

@@ -99,6 +99,7 @@ DB_PORT=5432
 DB_DATABASE=your-neon-database
 DB_USERNAME=your-neon-user
 DB_PASSWORD=your-neon-password
+DB_SSLMODE=require
 
 SESSION_DRIVER=database
 QUEUE_CONNECTION=database

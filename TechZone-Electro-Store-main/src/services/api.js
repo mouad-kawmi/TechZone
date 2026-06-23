@@ -22,15 +22,6 @@ const localPreviewSettings = {
   maintenanceMode: false
 };
 
-const readToken = () => {
-  try {
-    const raw = localStorage.getItem('tz_token');
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-};
-
 const money = (value) => Number(value || 0);
 
 const slugify = (value = '') =>
@@ -124,16 +115,15 @@ const parseResponse = async (response) => {
 };
 
 export const apiRequest = async (path, options = {}) => {
-  const token = readToken();
   const headers = {
     Accept: 'application/json',
     ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...(options.headers || {})
   };
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
+    credentials: 'include', // Send HttpOnly cookie on every request
     headers,
     body: options.body instanceof FormData ? options.body : options.body ? JSON.stringify(options.body) : undefined
   });
@@ -705,13 +695,9 @@ export const api = {
     await apiRequest(`/products/${productId}/reviews`, {
       method: 'POST',
       body: {
-        userId: review.userId,
         rating: review.rating,
         title: review.title || `Avis ${review.rating}/5`,
         body: review.comment || review.body || '',
-        isVerified: Boolean(review.isVerified),
-        isApproved: true,
-        helpfulCount: 0
       }
     });
     return api.getProduct(productId);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Events\NotificationCreated;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 
@@ -33,11 +34,14 @@ class NotificationController extends Controller
 
         $notification = Notification::create([
             'user_id' => $data['userId'] ?? null,
-            'type' => $data['type'] ?? 'info',
-            'title' => $data['title'],
+            'type'    => $data['type'] ?? 'info',
+            'title'   => $data['title'],
             'message' => $data['message'] ?? null,
-            'link' => $data['link'] ?? null,
+            'link'    => $data['link'] ?? null,
         ]);
+
+        // Broadcast real-time to admin panel via Reverb
+        broadcast(new NotificationCreated($notification))->toOthers();
 
         return $notification->toFrontendArray();
     }

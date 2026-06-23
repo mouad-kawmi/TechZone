@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { api } from "../../services/api";
 
+// Async logout: calls backend to revoke token cookie, then clears local state
 export const performLogout = createAsyncThunk(
     'auth/performLogout',
     async (_, { dispatch }) => {
@@ -26,7 +27,6 @@ const safeParse = (key, fallback) => {
 const getInitialUser = () => {
     const user = safeParse("tz_user", null);
     if (user && !user.paymentMethods) {
-        // Add sample card if none exist
         user.paymentMethods = [
             { id: 1, type: 'Visa', last4: '4242', expiry: '12/25', isDefault: true, color: 'from-blue-600 to-indigo-700' }
         ];
@@ -37,7 +37,7 @@ const getInitialUser = () => {
 const initialState = {
     user: getInitialUser(),
     isLoggedIn: !!safeParse("tz_user", null),
-    token: safeParse("tz_token", null),
+    token: null, // Token is now stored as an HttpOnly cookie — never exposed to JS
     isLoading: false,
     error: null
 };
@@ -54,9 +54,9 @@ const authSlice = createSlice({
             state.isLoading = false;
             state.isLoggedIn = true;
             state.user = action.payload.user;
-            state.token = action.payload.token;
+            state.token = null; // Never store token in JS — it lives in HttpOnly cookie
             localStorage.setItem("tz_user", JSON.stringify(action.payload.user));
-            localStorage.setItem("tz_token", JSON.stringify(action.payload.token));
+            localStorage.removeItem("tz_token"); // Clean up any legacy token
         },
         loginFailure: (state, action) => {
             state.isLoading = false;
@@ -73,9 +73,9 @@ const authSlice = createSlice({
             state.isLoading = false;
             state.isLoggedIn = true;
             state.user = action.payload.user;
-            state.token = action.payload.token;
+            state.token = null;
             localStorage.setItem("tz_user", JSON.stringify(action.payload.user));
-            localStorage.setItem("tz_token", JSON.stringify(action.payload.token));
+            localStorage.removeItem("tz_token");
         },
         updateUser: (state, action) => {
             state.user = { ...state.user, ...action.payload };

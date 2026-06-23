@@ -77,19 +77,34 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['message' => 'Logged out successfully.']);
+        return response()
+            ->json(['message' => 'Logged out successfully.'])
+            ->withoutCookie('tz_token');
     }
 
-    private function authResponse(User $user): array
+    private function authResponse(User $user): \Illuminate\Http\JsonResponse
     {
-        // Delete all old personal access tokens for this user
+        // Revoke all old tokens (single session)
         $user->tokens()->delete();
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return [
-            'token' => $token,
-            'user' => $user->toFrontendArray(),
-        ];
+        $cookieMinutes = 60 * 24 * 7; // 7 days
+        $secure        = config('app.env') !== 'local'; // HTTPS in production
+        $cookie = cookie(
+            'tz_token',
+            $token,
+            $cookieMinutes,
+            '/',
+            null,  // domain — null = current domain
+            $secure,
+            true,  // HttpOnly — JS cannot read it
+            false,
+            'Strict'
+        );
+
+        return response()
+            ->json(['user' => $user->toFrontendArray()])
+            ->withCookie($cookie);
     }
 }

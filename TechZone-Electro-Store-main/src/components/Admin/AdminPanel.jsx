@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import gsap from 'gsap';
 
@@ -19,6 +19,9 @@ import { AdminDashboardSkeleton } from '../UI/Skeleton.jsx';
 import AdminHeader from './Parts/AdminHeader';
 import AdminMessages from './Parts/AdminMessages';
 
+// WebSocket hook
+import useReverb from '../../hooks/useReverb';
+
 // Actions
 import {
     fetchProducts,
@@ -26,7 +29,8 @@ import {
     saveProductToBackend,
     deleteProductFromBackend,
     saveSettingsToBackend,
-    setToast
+    setToast,
+    addNotification
 } from '../../store';
 import { DollarSign, ShoppingCart, Package, Activity } from 'lucide-react';
 import { DEFAULT_CATEGORY, toFixedCategory } from '../../utils/catalog';
@@ -46,8 +50,14 @@ const AdminPanel = ({
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
     const [isSavingProduct, setIsSavingProduct] = useState(false);
 
-    const contentRef = useRef(null);
-    const unreadCount = notifications?.filter(n => !n.read).length || 0;
+    const contentRef   = useRef(null);
+    const unreadCount  = notifications?.filter(n => !n.read).length || 0;
+
+    // Real-time WebSocket: new notifications pushed from backend via Reverb
+    const handleRealtimeNotification = useCallback((notification) => {
+        dispatch(addNotification(notification));
+    }, [dispatch]);
+    useReverb(handleRealtimeNotification, true);
 
     useEffect(() => {
         if (contentRef.current) {

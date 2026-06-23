@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\NotificationCreated;
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Coupon;
@@ -148,12 +149,15 @@ class OrderController extends Controller
                 Cart::where('user_id', $userId)->first()?->items()->delete();
             }
 
-            Notification::create([
-                'type' => 'order',
-                'title' => 'Nouvelle commande',
+            $notification = Notification::create([
+                'type'    => 'order',
+                'title'   => 'Nouvelle commande',
                 'message' => "Commande {$order->order_number} de {$order->shipping_name} - {$order->final_total} DH",
-                'link' => '/admin/orders',
+                'link'    => '/admin/orders',
             ]);
+
+            // Real-time push to admin dashboard via Reverb WebSocket
+            broadcast(new NotificationCreated($notification));
 
             return $order->fresh('items');
         });

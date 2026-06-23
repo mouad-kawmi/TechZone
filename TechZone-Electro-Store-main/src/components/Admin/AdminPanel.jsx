@@ -64,41 +64,36 @@ const AdminPanel = ({
         }
     }, [activeTab, dispatch]);
 
+    const [serverStats, setServerStats] = useState(null);
+
+    useEffect(() => {
+        if (activeTab === 'dashboard') {
+            import('../../services/api').then(({ api }) => {
+                api.getAdminStats().then(data => {
+                    setServerStats(data);
+                }).catch(console.error);
+            });
+        }
+    }, [activeTab]);
+
     const stats = useMemo(() => {
-        if (!orders || !initialProducts) return { cards: [], breakdown: {} };
-        const delivered = orders.filter(o => o.status === 'Livré');
-        const totalRevenue = delivered.reduce((acc, o) => acc + (Number(o.finalTotal) || Number(o.amount) || 0), 0);
-        const totalStock = initialProducts.reduce((acc, p) => acc + (Number(p.stock) || 0), 0);
-        const lowStockCount = initialProducts.filter(p => (p.stock || 0) > 0 && (p.stock || 0) <= 5).length;
-        const categoryBreakdown = initialProducts.reduce((acc, p) => {
-            const cat = p.category || 'Autres';
-            const existing = acc.find(item => item.name === cat);
-            if (existing) {
-                existing.stock += Number(p.stock) || 0;
-            } else {
-                acc.push({ name: cat, stock: Number(p.stock) || 0 });
-            }
-            return acc;
-        }, []).sort((a, b) => b.stock - a.stock);
+        if (!serverStats) return { cards: [], breakdown: {} };
 
         return {
             cards: [
-                { label: "Revenu Total", value: `${totalRevenue.toLocaleString()} DH`, icon: DollarSign, color: "#10b981", bg: "rgba(16,185,129,0.1)", trend: "+12.5%" },
-                { label: "Commandes", value: (orders.length || 0).toString(), icon: ShoppingCart, color: "#3b82f6", bg: "rgba(59,130,246,0.1)", trend: "+8.2%" },
-                { label: "Stock Total", value: (totalStock || 0).toString(), icon: Package, color: "#f59e0b", bg: "rgba(245,158,11,0.1)", trend: "−2.1%" },
-                { label: "Alertes Stock", value: (lowStockCount || 0).toString(), icon: Activity, color: "#ef4444", bg: "rgba(239,68,68,0.1)", trend: `${lowStockCount} actives` }
+                { label: "Revenu Total", value: `${(serverStats.totalRevenue || 0).toLocaleString()} DH`, icon: DollarSign, color: "#10b981", bg: "rgba(16,185,129,0.1)", trend: serverStats.periodStats?.today?.revenueTrend || "0%" },
+                { label: "Commandes", value: (serverStats.ordersCount || 0).toString(), icon: ShoppingCart, color: "#3b82f6", bg: "rgba(59,130,246,0.1)", trend: serverStats.periodStats?.today?.ordersTrend || "0%" },
+                { label: "Stock Total", value: (serverStats.totalStock || 0).toString(), icon: Package, color: "#f59e0b", bg: "rgba(245,158,11,0.1)", trend: "−" },
+                { label: "Alertes Stock", value: (serverStats.lowStockProducts?.length || 0).toString(), icon: Activity, color: "#ef4444", bg: "rgba(239,68,68,0.1)", trend: `${serverStats.lowStockProducts?.length || 0} actives` }
             ],
             breakdown: {
-                totalStock,
-                categoryBreakdown,
-                lowStockProducts: initialProducts
-                    .filter(p => (p.stock || 0) > 0 && (p.stock || 0) <= 5)
-                    .sort((a, b) => (a.stock || 0) - (b.stock || 0))
-                    .slice(0, 5),
-                topSellers: [...initialProducts].sort((a, b) => (b.reviews || 0) - (a.reviews || 0)).slice(0, 5)
+                totalStock: serverStats.totalStock || 0,
+                categoryBreakdown: serverStats.categoryBreakdown || [],
+                lowStockProducts: serverStats.lowStockProducts || [],
+                topSellers: serverStats.topSellers || []
             }
         };
-    }, [orders, initialProducts]);
+    }, [serverStats]);
 
     const openEditor = (p = null) => {
         const productImages = p

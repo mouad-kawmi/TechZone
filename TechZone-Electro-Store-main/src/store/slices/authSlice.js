@@ -1,5 +1,17 @@
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { api } from "../../services/api";
 
-import { createSlice } from "@reduxjs/toolkit";
+export const performLogout = createAsyncThunk(
+    'auth/performLogout',
+    async (_, { dispatch }) => {
+        try {
+            await api.logout();
+        } catch (e) {
+            console.error("Logout API failed:", e);
+        }
+        dispatch(logout());
+    }
+);
 
 const safeParse = (key, fallback) => {
     try {

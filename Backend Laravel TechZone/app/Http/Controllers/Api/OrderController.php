@@ -96,7 +96,7 @@ class OrderController extends Controller
             $finalTotal = max(0, $subtotal + $shipping - $discount);
 
             $order = Order::create([
-                'order_number' => 'TZ-'.now()->format('His').random_int(100, 999),
+                'order_number' => (string) Str::uuid(),
                 'user_id' => $userId,
                 'shipping_name' => $data['shippingName'],
                 'shipping_phone' => $data['shippingPhone'] ?? null,
@@ -165,8 +165,8 @@ class OrderController extends Controller
     public function update(Request $request, Order $order)
     {
         $data = $request->validate([
-            'status' => ['nullable', 'string'],
-            'paymentStatus' => ['nullable', 'string'],
+            'status' => ['nullable', 'string', 'in:EN_ATTENTE,EN_COURS,EXPEDIE,LIVRE,ANNULE'],
+            'paymentStatus' => ['nullable', 'string', 'in:PENDING,PAID,FAILED,REFUNDED'],
             'paymentMethod' => ['nullable', 'string'],
             'shippedAt' => ['nullable', 'date'],
             'deliveredAt' => ['nullable', 'date'],

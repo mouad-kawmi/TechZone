@@ -16,7 +16,7 @@ class AuthController extends Controller
             $data = $request->validate([
                 'fullName' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'email', 'unique:users,email'],
-                'password' => ['required', 'string', 'min:6'],
+                'password' => ['required', 'string', \Illuminate\Validation\Rules\Password::min(8)->letters()->numbers()],
                 'phone' => ['nullable', 'string', 'max:40'],
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -42,7 +42,7 @@ class AuthController extends Controller
     {
         try {
             $data = $request->validate([
-                'email' => ['required', 'string'],
+                'email' => ['required', 'email'],
                 'password' => ['required', 'string'],
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -50,11 +50,8 @@ class AuthController extends Controller
             throw $e;
         }
 
-        $login = $data['email'];
-
         $user = User::query()
-            ->where('email', $login)
-            ->orWhere('username', $login)
+            ->where('email', $data['email'])
             ->first();
 
         if (! $user || ! Hash::check($data['password'], $user->password)) {

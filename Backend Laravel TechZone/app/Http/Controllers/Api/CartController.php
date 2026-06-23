@@ -106,6 +106,9 @@ class CartController extends Controller
 
     private function cartForUser(int $userId): Cart
     {
+        $user = request()->user();
+        abort_unless($user && ($user->id === $userId || $user->role === 'admin'), 403, 'Accès refusé.');
+
         return Cart::firstOrCreate(['user_id' => $userId]);
     }
 

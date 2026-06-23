@@ -5,15 +5,18 @@ import {
     LayoutDashboard, Package, ShoppingCart, Mail, LogOut,
     Settings, Users, Star, ListTodo, ChevronRight, Zap, X
 } from 'lucide-react';
-import { logout } from '../../store';
+import { performLogout } from '../../store';
 import { getBrandInitials, getStoreName } from '../../utils/brand';
 
 const AdminSidebar = ({ activeTab, setActiveTab, onBack, isOpen, onClose }) => {
     const dispatch = useDispatch();
     const settings = useSelector((state) => state.settings);
+    const auth = useSelector((state) => state.auth);
     const storeName = getStoreName(settings);
     const brandInitials = getBrandInitials(settings);
     const storeDomain = settings.email?.includes('@') ? settings.email.split('@')[1] : `${storeName.toLowerCase().replace(/\s+/g, '')}.ma`;
+    const adminName = auth?.user?.fullName || auth?.user?.name || 'Administrateur';
+    const adminInitial = adminName.charAt(0).toUpperCase();
 
     const menuItems = [
         { id: 'dashboard', label: 'Tableau de bord', icon: LayoutDashboard, description: 'Vue generale' },
@@ -26,7 +29,7 @@ const AdminSidebar = ({ activeTab, setActiveTab, onBack, isOpen, onClose }) => {
     ];
 
     const handleLogout = () => {
-        dispatch(logout());
+        dispatch(performLogout());
         if (onBack) onBack();
     };
 
@@ -198,10 +201,10 @@ const AdminSidebar = ({ activeTab, setActiveTab, onBack, isOpen, onClose }) => {
                             background: 'linear-gradient(135deg, #7c3aed, #2563eb)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             fontSize: 11, fontWeight: 700, color: '#fff', flexShrink: 0,
-                        }}>A</div>
+                        }}>{adminInitial}</div>
                         <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ fontSize: 11.5, fontWeight: 600, color: '#cbd5e1', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                Administrateur
+                                {adminName}
                             </div>
                             <div style={{ fontSize: 9.5, color: '#475569' }}>{storeDomain}</div>
                         </div>

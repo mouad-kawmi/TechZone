@@ -1,7 +1,7 @@
 import React from 'react';
 import { X, Heart, ShoppingBag, LogOut } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { logout, setView, setActiveCategory, setSearchQuery } from '../../../store';
+import { performLogout, setView, setActiveCategory, setSearchQuery } from '../../../store';
 
 const MobileMenu = ({ menuOpen, setMenuOpen, items, onCategoryClick, onWishlistClick, wishlistCount, onCartClick, cartCount, onTrackOrder, onContactClick, auth }) => {
     const dispatch = useDispatch();
@@ -67,7 +67,7 @@ const MobileMenu = ({ menuOpen, setMenuOpen, items, onCategoryClick, onWishlistC
                         <button onClick={() => { onContactClick(); setMenuOpen(false); }} className="w-full text-left p-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Aide & Support</button>
 
                         {auth.isLoggedIn ? (
-                            <button onClick={() => dispatch(logout())} className="w-full flex items-center gap-3 p-4 text-rose-500 text-[10px] font-bold uppercase tracking-widest">
+                            <button onClick={() => { dispatch(performLogout()); setMenuOpen(false); }} className="w-full flex items-center gap-3 p-4 text-rose-500 text-[10px] font-bold uppercase tracking-widest">
                                 <LogOut className="size-4" />
                                 Déconnexion
                             </button>

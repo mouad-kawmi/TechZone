@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Route;
 
 // Auth
 Route::post('/auth/register', [AuthController::class, 'register']);
-Route::post('/auth/login', [AuthController::class, 'login']);
+Route::middleware('throttle:6,1')->post('/auth/login', [AuthController::class, 'login']);
 
 // Catalog & Products
 Route::get('/products', [ProductController::class, 'index']);
@@ -31,21 +31,10 @@ Route::get('/products/{product}', [ProductController::class, 'show']);
 Route::get('/categories', [CatalogController::class, 'categories']);
 Route::get('/brands', [CatalogController::class, 'brands']);
 
-// Reviews
-Route::post('/products/{product}/reviews', [ReviewController::class, 'store']);
-
-// Carts
-Route::get('/users/{userId}/cart', [CartController::class, 'show']);
-Route::post('/users/{userId}/cart/items', [CartController::class, 'addItem']);
-Route::patch('/users/{userId}/cart/items/{item}', [CartController::class, 'updateItem']);
-Route::delete('/users/{userId}/cart/items/{item}', [CartController::class, 'removeItem']);
-Route::delete('/users/{userId}/cart/items', [CartController::class, 'clear']);
-Route::post('/users/{userId}/cart/merge', [CartController::class, 'mergeGuestCart']);
-
 // Checkout & Orders (Public tracking/checkout)
-Route::post('/checkout', [OrderController::class, 'checkout']);
-Route::post('/users/{userId}/checkout', [OrderController::class, 'checkout']);
-Route::get('/orders/track/{orderNumber}', [OrderController::class, 'track']);
+Route::middleware('throttle:30,1')->post('/checkout', [OrderController::class, 'checkout']);
+Route::middleware('throttle:30,1')->post('/users/{userId}/checkout', [OrderController::class, 'checkout']);
+Route::middleware('throttle:60,1')->get('/orders/track/{orderNumber}', [OrderController::class, 'track']);
 Route::post('/coupons/validate', [CouponController::class, 'validateCoupon']);
 
 // Support Messages (Public submission)
@@ -65,6 +54,17 @@ Route::middleware('auth:sanctum')->group(function () {
     // User specific routes
     Route::get('/users/{userId}/orders', [OrderController::class, 'index']);
     
+    // Reviews
+    Route::post('/products/{product}/reviews', [ReviewController::class, 'store']);
+
+    // Carts
+    Route::get('/users/{userId}/cart', [CartController::class, 'show']);
+    Route::post('/users/{userId}/cart/items', [CartController::class, 'addItem']);
+    Route::patch('/users/{userId}/cart/items/{item}', [CartController::class, 'updateItem']);
+    Route::delete('/users/{userId}/cart/items/{item}', [CartController::class, 'removeItem']);
+    Route::delete('/users/{userId}/cart/items', [CartController::class, 'clear']);
+    Route::post('/users/{userId}/cart/merge', [CartController::class, 'mergeGuestCart']);
+
     // Notifications
     Route::get('/users/{userId}/notifications', [NotificationController::class, 'index']);
     Route::post('/notifications', [NotificationController::class, 'store']);

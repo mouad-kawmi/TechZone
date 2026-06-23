@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '../../store';
+import { performLogout } from '../../store';
 
 // Sub-components
 import ProfileSidebar from './ProfileSidebar';
@@ -57,7 +57,7 @@ const Profile = ({ onBack, onAdminClick, isAdmin }) => {
     };
 
     const handleLogout = () => {
-        dispatch(logout());
+        dispatch(performLogout());
         onBack(); // Go home after logout
     };
 

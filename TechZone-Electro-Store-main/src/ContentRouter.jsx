@@ -104,7 +104,7 @@ const ContentRouter = (props) => {
                 onBack={handleGoHome}
             />);
         case 'ADMIN':
-            return renderLazyRoute(auth.isLoggedIn && (auth.user?.role === 'admin' || auth.user?.email === 'admin') ? (
+            return renderLazyRoute(auth.isLoggedIn && auth.user?.role === 'admin' ? (
                 <AdminView
                     onBack={handleGoHome}
                     allProducts={prods}

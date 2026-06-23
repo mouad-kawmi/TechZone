@@ -20,8 +20,10 @@ class OrderController extends Controller
     {
         $query = Order::with('items')->latest();
 
-        if ($request->route('userId')) {
-            $query->where('user_id', $request->route('userId'));
+        if ($userId = $request->route('userId')) {
+            $user = $request->user();
+            abort_unless($user && ((int) $user->id === (int) $userId || $user->role === 'admin'), 403, 'Accès refusé.');
+            $query->where('user_id', $userId);
         }
 
         return $query->get()->map(fn (Order $order) => $order->toFrontendArray());
@@ -29,6 +31,11 @@ class OrderController extends Controller
 
     public function checkout(Request $request, ?int $userId = null)
     {
+        if ($userId) {
+            $user = $request->user();
+            abort_unless($user && ((int) $user->id === $userId || $user->role === 'admin'), 403, 'Accès refusé.');
+        }
+
         $data = $request->validate([
             'items' => ['required', 'array', 'min:1'],
             'items.*.productId' => ['required', 'integer', 'exists:products,id'],

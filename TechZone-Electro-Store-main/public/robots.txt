@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://techzone-api.gt.tc/sitemap.xml

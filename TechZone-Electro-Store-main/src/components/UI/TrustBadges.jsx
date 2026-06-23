@@ -1,5 +1,5 @@
 import React from 'react';
-import { TRUST_BADGES } from '../../data/products';
+import { TRUST_BADGES } from '../../data/homeContent';
 
 const TrustBadges = () => {
     return (
@@ -11,9 +11,9 @@ const TrustBadges = () => {
                             <div className={`${badge.bg} dark:bg-slate-800/60 size-12 rounded-xl flex items-center justify-center mb-5 group-hover:scale-105 transition-transform duration-300`}>
                                 <badge.icon className={`size-5 ${badge.color}`} />
                             </div>
-                            <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-2">
+                            <p className="text-sm font-semibold text-slate-900 dark:text-white mb-2">
                                 {badge.title}
-                            </h3>
+                            </p>
                             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                                 {badge.desc}
                             </p>

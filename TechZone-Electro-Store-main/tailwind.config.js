@@ -1,7 +1,3 @@
-import forms from '@tailwindcss/forms';
-import typography from '@tailwindcss/typography';
-import containerQueries from '@tailwindcss/container-queries';
-
 /** @type {import('tailwindcss').Config} */
 export default {
     content: [
@@ -19,8 +15,8 @@ export default {
                 }
             },
             fontFamily: {
-                sans: ['Inter', 'sans-serif'],
-                display: ['Outfit', 'sans-serif'],
+                sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                display: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
             },
             keyframes: {
                 float: {
@@ -33,9 +29,5 @@ export default {
             }
         },
     },
-    plugins: [
-        forms,
-        typography,
-        containerQueries,
-    ],
+    plugins: [],
 }

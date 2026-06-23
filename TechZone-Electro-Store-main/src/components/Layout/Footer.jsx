@@ -2,7 +2,7 @@
 import React from 'react';
 import {
   Facebook, Twitter, Instagram, Youtube, Globe,
-  Mail, Phone, MapPin, ArrowRight, ShieldCheck,
+  Phone, MapPin, ArrowRight,
   CreditCard, Truck, Headphones, Sparkles
 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -65,7 +65,7 @@ const Footer = ({
               <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight leading-tight font-display max-w-[280px] sm:max-w-none mx-auto lg:mx-0">
                 Rejoignez la <span className="text-blue-500">{storeName}</span>
               </h2>
-              <p className="text-slate-400 text-xs sm:text-sm max-w-sm mx-auto lg:mx-0 leading-relaxed opacity-80">
+              <p className="text-slate-300 text-xs sm:text-sm max-w-sm mx-auto lg:mx-0 leading-relaxed">
                 Restez informé de nos dernières innovations et offres privées.
               </p>
             </div>
@@ -82,6 +82,7 @@ const Footer = ({
                 <input
                   type="email"
                   required
+                  aria-label="Adresse email pour la newsletter"
                   placeholder="votre@email.com"
                   className="flex-1 bg-transparent border-none text-white placeholder:text-slate-500 text-sm px-4 py-2 sm:py-0 focus:ring-0"
                 />
@@ -100,21 +101,22 @@ const Footer = ({
           <div className="col-span-2 lg:col-span-1 space-y-5 md:space-y-6">
             <div className="flex items-center gap-3 group cursor-pointer justify-center lg:justify-start" onClick={() => window.scrollTo(0, 0)}>
               <div className="size-9 md:size-10 bg-white text-slate-950 rounded-lg flex items-center justify-center font-bold text-base md:text-lg font-display">{brandInitials}</div>
-              <h2 className="text-lg md:text-xl font-bold tracking-tight font-display">{storeName}</h2>
+              <span className="text-lg md:text-xl font-bold tracking-tight font-display">{storeName}</span>
             </div>
-            <p className="text-slate-400 text-xs leading-relaxed text-center lg:text-left">
+            <p className="text-slate-300 text-xs leading-relaxed text-center lg:text-left">
               Destination premium pour l'électronique de haute performance au Maroc. Qualité, innovation et service d'exception.
             </p>
             <div className="flex justify-center lg:justify-start gap-2 md:gap-3">
               {[
-                { Icon: Facebook, url: 'https://facebook.com' },
-                { Icon: Instagram, url: 'https://instagram.com' },
-                { Icon: Youtube, url: 'https://youtube.com' },
-                { Icon: Twitter, url: 'https://twitter.com' }
-              ].map(({ Icon, url }, idx) => (
+                { Icon: Facebook, url: 'https://facebook.com', label: 'Facebook' },
+                { Icon: Instagram, url: 'https://instagram.com', label: 'Instagram' },
+                { Icon: Youtube, url: 'https://youtube.com', label: 'YouTube' },
+                { Icon: Twitter, url: 'https://twitter.com', label: 'Twitter' }
+              ].map(({ Icon, url, label }, idx) => (
                 <a
                   key={idx}
                   href={url}
+                  aria-label={`TechZone Electro sur ${label}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="size-8 md:size-9 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center hover:bg-white/10 hover:border-white/10 transition-all group"
@@ -131,7 +133,7 @@ const Footer = ({
             <ul className="space-y-2.5 md:space-y-3">
               {footerCategories.map(item => (
                 <li key={item}>
-                  <button onClick={() => onCategoryClick?.(item)} className="text-slate-400 hover:text-white transition-colors text-xs font-medium flex items-center gap-2 group">
+                  <button onClick={() => onCategoryClick?.(item)} className="text-slate-300 hover:text-white transition-colors text-xs font-medium flex items-center gap-2 group">
                     {categoryDisplayLabel(item)}
                   </button>
                 </li>
@@ -144,7 +146,7 @@ const Footer = ({
             <ul className="space-y-2.5 md:space-y-3">
               {companyLinks.map(item => (
                 <li key={item.label}>
-                  <button onClick={item.action} className="text-slate-400 hover:text-white transition-colors text-xs font-medium flex items-center gap-2 group text-left">
+                  <button onClick={item.action} className="text-slate-300 hover:text-white transition-colors text-xs font-medium flex items-center gap-2 group text-left">
                     {item.label}
                   </button>
                 </li>
@@ -157,7 +159,7 @@ const Footer = ({
             <ul className="space-y-2.5 md:space-y-3">
               {supportLinks.map(item => (
                 <li key={item.label}>
-                  <button onClick={item.action} className="text-slate-400 hover:text-white transition-colors text-xs font-medium flex items-center gap-2 group text-left">
+                  <button onClick={item.action} className="text-slate-300 hover:text-white transition-colors text-xs font-medium flex items-center gap-2 group text-left">
                     {item.label}
                   </button>
                 </li>
@@ -171,14 +173,14 @@ const Footer = ({
               <div className="flex items-start gap-3 justify-center lg:justify-start">
                 <MapPin className="size-3.5 md:size-4 text-blue-500 mt-0.5 shrink-0" />
                 <div>
-                  <p className="text-[10px] font-medium text-slate-500 mb-0.5">Showroom</p>
+                  <p className="text-[10px] font-medium text-slate-400 mb-0.5">Showroom</p>
                   <p className="text-xs font-medium text-white leading-tight">{settings.address}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3 justify-center lg:justify-start">
                 <Phone className="size-3.5 md:size-4 text-blue-500 mt-0.5 shrink-0" />
                 <div>
-                  <p className="text-[10px] font-medium text-slate-500 mb-0.5">Contact</p>
+                  <p className="text-[10px] font-medium text-slate-400 mb-0.5">Contact</p>
                   <p className="text-xs font-medium text-white leading-tight">{settings.phone}</p>
                 </div>
               </div>
@@ -192,9 +194,9 @@ const Footer = ({
           <div className="flex flex-col lg:flex-row items-center gap-3 md:gap-6 text-center lg:text-left">
             <div className="flex items-center gap-2 px-2.5 py-1 bg-white/5 rounded-md">
               <Globe className="size-3 text-slate-500" />
-              <span className="text-[10px] font-medium text-slate-400">Maroc / Français</span>
+              <span className="text-[10px] font-medium text-slate-300">Maroc / Francais</span>
             </div>
-            <p className="text-[10px] font-medium text-slate-600">
+            <p className="text-[10px] font-medium text-slate-400">
               © {currentYear} {storeName}. Performance electronique.
             </p>
           </div>

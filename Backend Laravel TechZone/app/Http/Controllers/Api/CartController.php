@@ -85,12 +85,17 @@ class CartController extends Controller
 
     public function mergeGuestCart(Request $request, int $userId)
     {
-        $data = $request->validate([
-            'items' => ['nullable', 'array'],
-            'items.*.productId' => ['required', 'integer', 'exists:products,id'],
-            'items.*.quantity' => ['nullable', 'integer', 'min:1'],
-            'items.*.variant' => ['nullable', 'string', 'max:100'],
-        ]);
+        try {
+            $data = $request->validate([
+                'items' => ['nullable', 'array'],
+                'items.*.productId' => ['required', 'integer', 'exists:products,id'],
+                'items.*.quantity' => ['nullable', 'integer', 'min:1'],
+                'items.*.variant' => ['nullable', 'string', 'max:100'],
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Cart merge validation failed', ['errors' => $e->errors(), 'input' => $request->all()]);
+            throw $e;
+        }
 
         foreach ($data['items'] ?? [] as $item) {
             $this->addItem(new Request($item), $userId);

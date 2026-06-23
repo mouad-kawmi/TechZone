@@ -24,6 +24,7 @@
 **/*.log
 summary.html
 summary.json
+deploy/infinityfree/*.zip
 
 # Local agent notes and legacy nested backend copy
 **/.agent/

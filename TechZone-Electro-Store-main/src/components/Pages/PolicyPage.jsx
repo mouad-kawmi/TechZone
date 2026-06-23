@@ -44,7 +44,7 @@ const PolicyPage = ({ type, onBack, onNavigateTo }) => {
         return (
           <div className="space-y-8 sm:space-y-12">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-black uppercase tracking-tighter">Livraison & Expédition</h2>
-            <div className="prose prose-slate max-w-none text-slate-600 font-medium space-y-6">
+            <div className="max-w-none text-slate-600 font-medium space-y-6 leading-relaxed">
               <p className="text-base sm:text-lg">{storeName} assure une logistique de pointe pour garantir que vos produits premium arrivent en parfait état et dans les meilleurs délais.</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8 py-4 sm:py-8">
                 <div className="p-6 sm:p-8 bg-blue-50 rounded-2xl sm:rounded-[2.5rem] space-y-3 sm:space-y-4">

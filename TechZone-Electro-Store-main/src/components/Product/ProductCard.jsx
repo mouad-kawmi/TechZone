@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Eye, Star, ShoppingCart, Heart, BarChart2 } from 'lucide-react';
+import { optimizeImageUrl } from '../../utils/images';
 
 function ProductCard(props) {
   const {
@@ -23,6 +24,7 @@ function ProductCard(props) {
   };
 
   const off = getOff();
+  const cardImage = optimizeImageUrl(product.image, 480, 70);
 
   const add = (e) => {
     e.stopPropagation();
@@ -62,8 +64,10 @@ function ProductCard(props) {
         </div>
 
         <img
-          src={product.image || null}
+          src={cardImage || null}
           alt={product.title}
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-contain transition-transform duration-[1.5s] group-hover/img:scale-110 cursor-pointer drop-shadow-2xl"
           onClick={() => onViewDetails(product)}
         />
@@ -79,6 +83,7 @@ function ProductCard(props) {
             }}
             className="size-12 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl flex items-center justify-center shadow-2xl hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 transition-all active:scale-95"
             title="Aperçu rapide"
+            aria-label={`Apercu rapide de ${product.title}`}
           >
             <Eye className="size-5" />
           </button>
@@ -90,6 +95,7 @@ function ProductCard(props) {
               : 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white hover:bg-rose-500 hover:text-white'
               }`}
             title={isFavorite ? 'Retirer' : 'Ajouter'}
+            aria-label={isFavorite ? `Retirer ${product.title} des favoris` : `Ajouter ${product.title} aux favoris`}
           >
             <Heart className={`size-5 ${isFavorite ? 'fill-current' : ''}`} />
           </button>
@@ -101,6 +107,7 @@ function ProductCard(props) {
               : 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white hover:bg-emerald-500 hover:text-white'
             }`}
             title="Comparer"
+            aria-label={`Comparer ${product.title}`}
           >
             <BarChart2 className="size-5" />
           </button>
@@ -148,6 +155,7 @@ function ProductCard(props) {
             onClick={add}
             className="size-14 bg-slate-950 dark:bg-white text-white dark:text-slate-950 rounded-[1.2rem] flex items-center justify-center hover:bg-blue-600 dark:hover:bg-blue-600 dark:hover:text-white transition-all active:scale-90 disabled:opacity-50 shadow-xl group/btn"
             title={product.isOutOfStock ? 'Rupture' : 'Ajouter au Panier'}
+            aria-label={product.isOutOfStock ? `${product.title} en rupture de stock` : `Ajouter ${product.title} au panier`}
           >
             <ShoppingCart className="size-6 group-hover/btn:scale-110 transition-transform" />
           </button>

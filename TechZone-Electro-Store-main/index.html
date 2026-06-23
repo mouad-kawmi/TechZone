@@ -1,88 +1,128 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Next-Gen Boutique | Excellence Technologique</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <title>TechZone Electro | Boutique Tech Premium au Maroc</title>
+  <meta name="description"
+    content="TechZone Electro, boutique marocaine d'electronique premium: smartphones, laptops, tablettes, audio, livraison rapide et garantie." />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#020617" />
+  <link rel="canonical" href="https://techzone-api.gt.tc/" />
+  <meta property="og:title" content="TechZone Electro | Excellence Technologique" />
+  <meta property="og:description"
+    content="Decouvrez une selection premium de smartphones, laptops, tablettes et audio au Maroc." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://techzone-api.gt.tc/" />
+  <meta property="og:image" content="https://techzone-api.gt.tc/s24-ultra-hero.jpg" />
+
+  <!-- === PERFORMANCE: Resource hints === -->
+  <link rel="preconnect" href="https://techzone-api.gt.tc" />
+  <link rel="dns-prefetch" href="https://techzone-api.gt.tc" />
+
+  <!-- === LCP IMAGE: Preload hero image with high priority === -->
   <link
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@500;600;700;800;900&display=swap"
-    rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-    rel="stylesheet" />
+    rel="preload"
+    as="image"
+    href="/s24-ultra-cutout-dark-180.jpg"
+    imagesrcset="/s24-ultra-cutout-dark-180.jpg 180w, /s24-ultra-cutout-dark.jpg 221w"
+    imagesizes="(max-width: 640px) 180px, 221px"
+    fetchpriority="high"
+  />
 
+  <!-- === CRITICAL CSS: Minimal inline styles for instant first paint === -->
+  <!-- Full styles are in index.css (loaded by Vite); this prevents FOUC -->
   <style>
-    html.lenis {
-      height: auto;
+    /* 1. Prevent layout shift before Tailwind loads */
+    *,::before,::after{box-sizing:border-box;}
+    html{height:auto;}
+    body{
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      font-size:15px;line-height:1.6;
+      background-color:#ffffff;
+      -webkit-font-smoothing:antialiased;
+      overflow-x:hidden;
+      margin:0;
     }
-
-    .lenis.lenis-smooth {
-      scroll-behavior: auto;
+    /* 2. Prevent dark-mode flash */
+    @media(prefers-color-scheme:dark){
+      html:not(.light) body{background-color:#020617;color:#f1f5f9;}
     }
-
-    .lenis.lenis-smooth [data-lenis-prevent] {
-      overscroll-behavior: contain;
-    }
-
-    .lenis.lenis-stopped {
-      overflow: hidden;
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      font-style: normal !important;
-      font-size: 15px;
-      line-height: 1.6;
-      background-color: #ffffff;
-      -webkit-font-smoothing: antialiased;
-      transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      overflow-x: hidden;
-    }
-
-    .dark body {
-      background-color: #020617;
-    }
-
-    .font-display {
-      font-family: 'Outfit', sans-serif;
-      font-style: normal !important;
-    }
-
-    /* Professional Scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: #f1f5f9;
-    }
-
-    .dark ::-webkit-scrollbar-track {
-      background: #0f172a;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 20px;
-      border: 3px solid #f1f5f9;
-    }
-
-    .dark ::-webkit-scrollbar-thumb {
-      background: #334155;
-      border: 3px solid #0f172a;
-    }
-
-    ::selection {
-      background-color: #3B82F6;
-      color: white;
-    }
+    /* 3. Lenis smooth scroll compatibility */
+    .lenis.lenis-smooth{scroll-behavior:auto;}
+    .lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain;}
+    .lenis.lenis-stopped{overflow:hidden;}
+    /* 4. Reserve space for hero image to reduce CLS */
+    #root{min-height:100vh;}
   </style>
 </head>
 
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
-  <div id="root"></div>
+  <div id="root">
+    <div class="min-h-screen overflow-x-hidden bg-slate-950 text-white">
+      <header class="fixed top-0 z-50 w-full border-b border-white/10 bg-slate-950/95">
+        <div class="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-4">
+          <a href="/" class="flex items-center gap-3" aria-label="TE TechZone Electro - accueil">
+            <span class="flex size-10 items-center justify-center rounded-xl bg-white text-sm font-bold text-slate-950">TE</span>
+            <span class="text-lg font-bold uppercase tracking-tight">TechZone Electro</span>
+          </a>
+          <a href="#products" class="rounded-xl bg-white px-4 py-2 text-xs font-bold uppercase tracking-widest text-slate-950">
+            Catalogue
+          </a>
+        </div>
+      </header>
+
+      <main class="pt-24">
+        <section class="relative flex min-h-[85vh] items-center overflow-hidden">
+          <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(37,99,235,0.25),transparent_34%),linear-gradient(135deg,#020617_0%,#0f172a_50%,#020617_100%)]"></div>
+          <div class="relative z-10 mx-auto grid max-w-[1440px] items-center gap-10 px-6 py-10 lg:grid-cols-2 lg:px-12">
+            <div class="mx-auto max-w-2xl text-center lg:mx-0 lg:text-left">
+              <p class="mb-5 inline-flex rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs font-semibold text-blue-200">
+                Nouvelle collection 2025
+              </p>
+              <h1 class="text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
+                TechZone Electro, l'elite de la technologie.
+              </h1>
+              <p class="mx-auto mt-5 max-w-xl text-base leading-relaxed text-slate-300 lg:mx-0">
+                Smartphones, laptops, tablettes et audio premium au Maroc avec livraison rapide et garantie.
+              </p>
+              <div class="mt-8 flex flex-col items-center gap-4 sm:flex-row lg:justify-start">
+                <a href="#products" class="rounded-xl bg-white px-7 py-3 text-sm font-semibold text-slate-950">
+                  Decouvrir la selection
+                </a>
+                <p class="text-sm font-semibold text-slate-300">Note globale 4.9/5</p>
+              </div>
+            </div>
+
+            <div class="mx-auto flex h-[360px] items-center justify-center sm:h-[460px] lg:h-[520px]">
+              <img
+                src="/s24-ultra-cutout-dark-180.jpg"
+                srcset="/s24-ultra-cutout-dark-180.jpg 180w, /s24-ultra-cutout-dark.jpg 221w"
+                sizes="(max-width: 640px) 180px, 221px"
+                width="221"
+                height="458"
+                alt="Smartphone premium TechZone"
+                fetchpriority="high"
+                decoding="async"
+                class="block h-auto w-[180px] object-contain drop-shadow-[0_40px_70px_rgba(59,130,246,0.25)] sm:w-[210px] lg:w-[221px]"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section id="products" class="mx-auto max-w-[1440px] px-6 py-20">
+          <p class="text-[10px] font-bold uppercase tracking-[0.35em] text-blue-300">Catalogue selection</p>
+          <h2 class="mt-4 text-2xl font-black uppercase tracking-tight text-white">
+            Selection premium
+          </h2>
+          <p class="mt-6 max-w-xl text-sm leading-relaxed text-slate-300">
+            Le catalogue interactif se charge automatiquement des que vous commencez a naviguer.
+          </p>
+        </section>
+      </main>
+    </div>
+  </div>
   <script type="module" src="/src/index.jsx"></script>
 </body>
 

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
-import { CATEGORY_GRID } from '../../data/products';
+import { CATEGORY_GRID } from '../../data/homeContent';
 import { categoryDisplayLabel, categoryMatches } from '../../utils/catalog';
 
 const CategoryGrid = ({ onCategoryChange, allProducts = [] }) => {

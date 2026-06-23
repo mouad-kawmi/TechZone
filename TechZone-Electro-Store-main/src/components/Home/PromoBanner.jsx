@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { checkExpiry } from '../../store';
+import { optimizeImageUrl } from '../../utils/images';
 
 const PromoBanner = ({ products = [], onViewDetails }) => {
     const dispatch = useDispatch();
@@ -89,7 +90,7 @@ const ProductItem = ({ product, onClick }) => {
     return (
         <div onClick={onClick} className="group relative p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-white/20 cursor-pointer transition-all">
             <div className="aspect-square mb-3">
-                <img src={product.image || null} alt={product.title} className="w-full h-full object-contain group-hover:scale-105 transition-transform" />
+                <img src={optimizeImageUrl(product.image, 420, 70) || null} alt={product.title} loading="lazy" decoding="async" className="w-full h-full object-contain group-hover:scale-105 transition-transform" />
             </div>
             <h3 className="text-xs text-slate-400 font-medium truncate">{product.title}</h3>
             <p className="text-blue-400 font-semibold text-sm mt-1">{product.price.toLocaleString()} DH</p>

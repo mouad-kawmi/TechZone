@@ -100,8 +100,8 @@ const Testimonials = ({ onReadMoreReviews, allProducts = [] }) => {
           </div>
         ) : (
           <div className="mb-16 rounded-3xl border border-dashed border-white/10 bg-slate-900/45 px-6 py-16 text-center">
-            <MessageSquare className="mx-auto size-12 text-slate-700" />
-            <p className="mt-4 text-xs font-black uppercase tracking-widest text-slate-500">
+            <MessageSquare className="mx-auto size-12 text-slate-400" />
+            <p className="mt-4 text-xs font-black uppercase tracking-widest text-slate-300">
               Aucun avis client valide pour le moment
             </p>
           </div>
@@ -118,13 +118,13 @@ const Testimonials = ({ onReadMoreReviews, allProducts = [] }) => {
         </div>
 
         <div className="pt-16 border-t border-white/10">
-          <h3 className="text-slate-600 text-xs font-medium text-center mb-10">Reconnaissance de l'industrie</h3>
-          <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16 opacity-20 grayscale hover:grayscale-0 hover:opacity-50 transition-all duration-500">
-            <div className="text-lg font-bold tracking-tight text-white">TechCrunch</div>
-            <div className="text-xl font-serif font-bold text-white">Wired</div>
-            <div className="text-lg font-sans font-bold tracking-tight text-white">The Verge</div>
-            <div className="text-xl font-bold tracking-tight text-white">CNET</div>
-            <div className="text-lg font-serif font-medium tracking-wide text-white">Engadget</div>
+          <h3 className="text-slate-300 text-xs font-medium text-center mb-10">Reconnaissance de l'industrie</h3>
+          <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16 grayscale hover:grayscale-0 transition-all duration-500">
+            <div className="text-lg font-bold tracking-tight text-slate-300">TechCrunch</div>
+            <div className="text-xl font-serif font-bold text-slate-300">Wired</div>
+            <div className="text-lg font-sans font-bold tracking-tight text-slate-300">The Verge</div>
+            <div className="text-xl font-bold tracking-tight text-slate-300">CNET</div>
+            <div className="text-lg font-serif font-medium tracking-wide text-slate-300">Engadget</div>
           </div>
         </div>
       </div>

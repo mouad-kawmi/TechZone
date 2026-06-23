@@ -1,5 +1,5 @@
 import React from 'react';
-import { BRANDS } from '../../data/products';
+import { BRANDS } from '../../data/homeContent';
 
 const BrandLogos = () => {
     return (
@@ -17,6 +17,8 @@ const BrandLogos = () => {
                             <img
                                 src={brand.logo || null}
                                 alt={brand.name}
+                                loading="lazy"
+                                decoding="async"
                                 className="max-h-full max-w-full object-contain dark:invert"
                             />
                         </div>

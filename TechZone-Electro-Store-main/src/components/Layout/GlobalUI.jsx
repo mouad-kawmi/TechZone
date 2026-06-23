@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CheckCircle2, X, Info } from 'lucide-react';
 import Header from './Header';
-import CartDrawer from '../Checkout/CartDrawer';
-import WishlistDrawer from '../Product/WishlistDrawer';
-import QuickViewModal from '../Product/QuickViewModal';
 import WhatsAppButton from './WhatsAppButton';
 import {
     toggleCart, toggleWishlistDrawer, toggleWishlist, addToCart, removeFromCart,
     updateQuantity, setSelectedProductId, setView, setSearchQuery, toggleCompare, setToast
 } from '../../store';
+
+const CartDrawer = lazy(() => import('../Checkout/CartDrawer'));
+const WishlistDrawer = lazy(() => import('../Product/WishlistDrawer'));
+const QuickViewModal = lazy(() => import('../Product/QuickViewModal'));
 
 const GlobalUI = ({
     quick,
@@ -59,32 +60,40 @@ const GlobalUI = ({
                 searchQuery={searchQuery}
             />)}
 
-            <CartDrawer
-                isOpen={isCartOpen}
-                items={items}
-                onClose={() => dispatch(toggleCart())}
-                onCheckout={() => { dispatch(setView('CHECKOUT')); dispatch(toggleCart()); }}
-                onRemove={(id) => handleRemoveFromCart ? handleRemoveFromCart(id) : dispatch(removeFromCart(id))}
-                onUpdateQuantity={(id, delta) => handleUpdateCartQuantity ? handleUpdateCartQuantity(id, delta) : dispatch(updateQuantity({ id, delta }))}
-            />
+            <Suspense fallback={null}>
+                {isCartOpen && (
+                    <CartDrawer
+                        isOpen={isCartOpen}
+                        items={items}
+                        onClose={() => dispatch(toggleCart())}
+                        onCheckout={() => { dispatch(setView('CHECKOUT')); dispatch(toggleCart()); }}
+                        onRemove={(id) => handleRemoveFromCart ? handleRemoveFromCart(id) : dispatch(removeFromCart(id))}
+                        onUpdateQuantity={(id, delta) => handleUpdateCartQuantity ? handleUpdateCartQuantity(id, delta) : dispatch(updateQuantity({ id, delta }))}
+                    />
+                )}
 
-            <WishlistDrawer
-                isOpen={isWishlistOpen}
-                items={wishes}
-                onClose={() => dispatch(toggleWishlistDrawer())}
-                onAddToCart={handleAddToCart}
-                onRemove={(id) => dispatch(toggleWishlist({ id }))}
-                onAddAllToCart={() => { wishes.forEach((item) => handleAddToCart ? handleAddToCart(item) : dispatch(addToCart(item))); dispatch(toggleWishlistDrawer()); }}
-            />
+                {isWishlistOpen && (
+                    <WishlistDrawer
+                        isOpen={isWishlistOpen}
+                        items={wishes}
+                        onClose={() => dispatch(toggleWishlistDrawer())}
+                        onAddToCart={handleAddToCart}
+                        onRemove={(id) => dispatch(toggleWishlist({ id }))}
+                        onAddAllToCart={() => { wishes.forEach((item) => handleAddToCart ? handleAddToCart(item) : dispatch(addToCart(item))); dispatch(toggleWishlistDrawer()); }}
+                    />
+                )}
 
-            <QuickViewModal
-                product={quick}
-                onClose={() => setQuick(null)}
-                onAddToCart={handleAddToCart}
-                onViewDetails={(p) => { dispatch(setSelectedProductId(p.id)); dispatch(setView('DETAILS')); setQuick(null); }}
-                onToggleWishlist={(p) => dispatch(toggleWishlist(p))}
-                wishlistItems={wishes}
-            />
+                {quick && (
+                    <QuickViewModal
+                        product={quick}
+                        onClose={() => setQuick(null)}
+                        onAddToCart={handleAddToCart}
+                        onViewDetails={(p) => { dispatch(setSelectedProductId(p.id)); dispatch(setView('DETAILS')); setQuick(null); }}
+                        onToggleWishlist={(p) => dispatch(toggleWishlist(p))}
+                        wishlistItems={wishes}
+                    />
+                )}
+            </Suspense>
 
             {ui.view !== 'ADMIN' && <WhatsAppButton />}
 
@@ -111,7 +120,7 @@ const GlobalUI = ({
                                     {toast.msg || toast.message}
                                 </p>
                             </div>
-                            <button onClick={() => dispatch(setToast(null))} className="size-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-all">
+                            <button onClick={() => dispatch(setToast(null))} aria-label="Fermer la notification" className="size-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-all">
                                 <X className="size-4" />
                             </button>
                         </div>

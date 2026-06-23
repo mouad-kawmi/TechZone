@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { Headphones, Laptop, Search, Smartphone, Tablet } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setActiveCategory, setView, setSearchQuery } from '../../store';
@@ -9,7 +9,8 @@ import { getBrandInitials, getStoreName } from '../../utils/brand';
 import TopBar from './Parts/TopBar';
 import SearchSystem from './Parts/SearchSystem';
 import HeaderActions from './Parts/HeaderActions';
-import MobileMenu from './Parts/MobileMenu';
+
+const MobileMenu = lazy(() => import('./Parts/MobileMenu'));
 
 const Header = (props) => {
   const dispatch = useDispatch();
@@ -59,10 +60,15 @@ const Header = (props) => {
 
           <div className="flex min-w-0 flex-1 items-center gap-6 xl:gap-10 2xl:gap-12">
             {/* Logo */}
-            <div className="flex shrink-0 items-center gap-3 cursor-pointer group" onClick={onHomeClick}>
+            <button
+              type="button"
+              className="flex shrink-0 items-center gap-3 cursor-pointer group"
+              onClick={onHomeClick}
+              aria-label={`${brandInitials} ${storeName} - Retour a l'accueil`}
+            >
               <div className="size-10 bg-slate-950 dark:bg-white text-white dark:text-slate-950 rounded-xl flex items-center justify-center font-bold font-display text-sm tracking-tighter shadow-lg group-hover:bg-blue-600 transition-all">{brandInitials}</div>
-              <h2 className="max-w-[180px] truncate text-slate-950 dark:text-white text-xl font-bold uppercase tracking-tighter font-display hidden sm:block">{storeName}</h2>
-            </div>
+              <span className="max-w-[180px] truncate text-slate-950 dark:text-white text-xl font-bold uppercase tracking-tighter font-display hidden sm:block">{storeName}</span>
+            </button>
 
             {/* Desktop Navigation */}
             <nav className="hidden xl:flex shrink-0 items-center gap-4 2xl:gap-7">
@@ -129,6 +135,7 @@ const Header = (props) => {
                 <Search className="size-4 text-slate-400 mr-3" />
                 <input
                   type="text" autoFocus
+                  aria-label="Rechercher un produit"
                   className="bg-transparent border-none focus:ring-0 text-slate-900 dark:text-white placeholder:text-slate-400 p-0 text-[12px] font-medium w-full"
                   placeholder="Que cherchez-vous ?"
                   value={searchQuery}
@@ -141,14 +148,18 @@ const Header = (props) => {
         )}
       </header>
 
-      <MobileMenu
-        menuOpen={menuOpen} setMenuOpen={setMenuOpen}
-        items={items} onCategoryClick={onCategoryClick}
-        onWishlistClick={onWishlistClick} wishlistCount={wishlistCount}
-        onCartClick={onCartClick} cartCount={cartCount}
-        onTrackOrder={onTrackOrder} onContactClick={onContactClick}
-        auth={auth}
-      />
+      {menuOpen && (
+        <Suspense fallback={null}>
+          <MobileMenu
+            menuOpen={menuOpen} setMenuOpen={setMenuOpen}
+            items={items} onCategoryClick={onCategoryClick}
+            onWishlistClick={onWishlistClick} wishlistCount={wishlistCount}
+            onCartClick={onCartClick} cartCount={cartCount}
+            onTrackOrder={onTrackOrder} onContactClick={onContactClick}
+            auth={auth}
+          />
+        </Suspense>
+      )}
     </div>
   );
 };

@@ -32,6 +32,7 @@ const SearchSystem = ({ searchQuery, onSearch, onSearchSubmit, allProducts, onVi
                 <Search className="size-4 text-slate-400 mr-3" />
                 <input
                     type="text"
+                    aria-label="Rechercher un produit"
                     className="bg-transparent border-none focus:ring-0 text-slate-900 dark:text-white placeholder:text-slate-400 p-0 text-[11px] font-medium w-full outline-none"
                     placeholder="Rechercher..."
                     value={searchQuery}
@@ -49,19 +50,20 @@ const SearchSystem = ({ searchQuery, onSearch, onSearchSubmit, allProducts, onVi
                     </div>
                     <div className="max-h-[300px] overflow-y-auto">
                         {results.map(p => (
-                            <div
+                            <button
+                                type="button"
                                 key={p.id}
-                                className="flex items-center gap-3 p-2 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition-all cursor-pointer group"
+                                className="w-full flex items-center gap-3 p-2 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition-all cursor-pointer group text-left"
                                 onClick={() => { onViewProduct?.(p); setShowRes(false); }}
                             >
                                 <div className="size-10 bg-slate-50 dark:bg-white rounded-lg p-1">
-                                    <img src={p.image || null} className="w-full h-full object-contain" alt={p.title} />
+                                    <img src={p.image || null} className="w-full h-full object-contain" alt={p.title} loading="lazy" decoding="async" />
                                 </div>
                                 <div className="flex-1 overflow-hidden">
                                     <p className="text-[10px] font-bold text-slate-900 dark:text-white truncate">{p.title}</p>
                                     <p className="text-[9px] font-bold text-blue-600">{p.price.toLocaleString()} DH</p>
                                 </div>
-                            </div>
+                            </button>
                         ))}
                         <button
                             onClick={() => { onSearchSubmit?.(searchQuery); setShowRes(false); }}

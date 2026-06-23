@@ -1,21 +1,22 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import HomeView from './views/HomeView';
-import DetailsView from './views/DetailsView.jsx';
-import CategoryView from './components/Product/CategoryPage.jsx';
-import AdminView from './views/AdminView.jsx';
-import ProfileView from './views/ProfileView';
-import LoginView from './views/LoginView';
-import CheckoutView from './views/CheckoutView.jsx';
-import OrderSuccessView from './views/OrderSuccessView.jsx';
-import SearchResultsView from './views/SearchResultsView.jsx';
-import ReviewsPage from './components/Pages/ReviewsPage.jsx';
-import ContactView from './views/ContactView.jsx';
-import About from './components/Pages/About';
-import TrackingView from './views/TrackingView.jsx';
-import ComparisonView from './views/ComparisonView.jsx';
-import PolicyView from './views/PolicyView.jsx';
-import FAQView from './views/FAQView.jsx';
 import { AdminDashboardSkeleton, CatalogSkeleton, PageSkeleton, SkeletonDetails } from './components/UI/Skeleton.jsx';
+
+const DetailsView = lazy(() => import('./views/DetailsView.jsx'));
+const CategoryView = lazy(() => import('./components/Product/CategoryPage.jsx'));
+const AdminView = lazy(() => import('./views/AdminView.jsx'));
+const ProfileView = lazy(() => import('./views/ProfileView'));
+const LoginView = lazy(() => import('./views/LoginView'));
+const CheckoutView = lazy(() => import('./views/CheckoutView.jsx'));
+const OrderSuccessView = lazy(() => import('./views/OrderSuccessView.jsx'));
+const SearchResultsView = lazy(() => import('./views/SearchResultsView.jsx'));
+const ReviewsPage = lazy(() => import('./components/Pages/ReviewsPage.jsx'));
+const ContactView = lazy(() => import('./views/ContactView.jsx'));
+const About = lazy(() => import('./components/Pages/About'));
+const TrackingView = lazy(() => import('./views/TrackingView.jsx'));
+const ComparisonView = lazy(() => import('./views/ComparisonView.jsx'));
+const PolicyView = lazy(() => import('./views/PolicyView.jsx'));
+const FAQView = lazy(() => import('./views/FAQView.jsx'));
 
 const ContentRouter = (props) => {
     const {
@@ -40,6 +41,12 @@ const ContentRouter = (props) => {
     if (loading || (isCatalogPending && ['HOME', 'CATEGORY', 'SEARCH', 'DETAILS'].includes(view))) {
         return routeSkeleton();
     }
+
+    const renderLazyRoute = (content) => (
+        <Suspense fallback={routeSkeleton()}>
+            {content}
+        </Suspense>
+    );
 
     switch (view) {
         case 'HOME':
@@ -68,7 +75,7 @@ const ContentRouter = (props) => {
                 onBack={handleGoHome}
             />;
         case 'DETAILS':
-            return selP ? (
+            return renderLazyRoute(selP ? (
                 <DetailsView
                     selectedProduct={selP}
                     allProducts={prods}
@@ -82,9 +89,9 @@ const ContentRouter = (props) => {
                     compareItems={comps}
                     onAddReview={onAddReview}
                 />
-            ) : <SkeletonDetails />;
+            ) : <SkeletonDetails />);
         case 'CATEGORY':
-            return <CategoryView
+            return renderLazyRoute(<CategoryView
                 category={activeCategory}
                 products={prods}
                 onViewDetails={(p) => { dispatch(setSelectedProductId(p.id)); dispatch(setView('DETAILS')); }}
@@ -95,9 +102,9 @@ const ContentRouter = (props) => {
                 wishlistItems={wishes}
                 compareItems={comps}
                 onBack={handleGoHome}
-            />;
+            />);
         case 'ADMIN':
-            return auth.isLoggedIn && (auth.user?.role === 'admin' || auth.user?.email === 'admin') ? (
+            return renderLazyRoute(auth.isLoggedIn && (auth.user?.role === 'admin' || auth.user?.email === 'admin') ? (
                 <AdminView
                     onBack={handleGoHome}
                     allProducts={prods}
@@ -114,17 +121,17 @@ const ContentRouter = (props) => {
                     }}
                     onDeleteReview={(id) => dispatch(deleteReview(id))}
                 />
-            ) : <LoginView />;
+            ) : <LoginView />);
         case 'PROFILE':
-            return auth.isLoggedIn ? <ProfileView onBack={handleGoHome} /> : <LoginView />;
+            return renderLazyRoute(auth.isLoggedIn ? <ProfileView onBack={handleGoHome} /> : <LoginView />);
         case 'LOGIN':
-            return <LoginView onBack={handleGoHome} />;
+            return renderLazyRoute(<LoginView onBack={handleGoHome} />);
         case 'CHECKOUT':
-            return <CheckoutView items={items} onOrderSuccess={(o) => { setLast(o); dispatch(setView('SUCCESS')); dispatch(clearCart()); }} onBack={handleGoHome} />;
+            return renderLazyRoute(<CheckoutView items={items} onOrderSuccess={(o) => { setLast(o); dispatch(setView('SUCCESS')); dispatch(clearCart()); }} onBack={handleGoHome} />);
         case 'SUCCESS':
-            return <OrderSuccessView orderData={last} onReturnHome={handleGoHome} />;
+            return renderLazyRoute(<OrderSuccessView orderData={last} onReturnHome={handleGoHome} />);
         case 'SEARCH':
-            return <SearchResultsView
+            return renderLazyRoute(<SearchResultsView
                 query={searchQuery}
                 products={filts}
                 activeCategory={activeCategory}
@@ -137,17 +144,17 @@ const ContentRouter = (props) => {
                 compareItems={comps}
                 onAddToCompare={(p) => dispatch(toggleCompare(p))}
                 onBack={handleGoHome}
-            />;
-        case 'REVIEWS': return <ReviewsPage onBack={handleGoHome} products={prods} />;
-        case 'FAQ': return <FAQView onBack={handleGoHome} />;
-        case 'CONTACT': return <ContactView onBack={handleGoHome} />;
-        case 'ABOUT': return <About onBack={handleGoHome} />;
-        case 'TRACKING': return <TrackingView onBack={handleGoHome} orders={allO} />;
-        case 'COMPARE': return <ComparisonView compareItems={comps} onBack={handleGoHome} onRemove={(id) => dispatch(toggleCompare({ id }))} onAddToCart={handleAddToCart} onViewDetails={(p) => { dispatch(setSelectedProductId(p.id)); dispatch(setView('DETAILS')); }} />;
-        case 'POLICY_SHIPPING': return <PolicyView type="shipping" onBack={handleGoHome} onTypeChange={(t) => { console.log('Switch to:', t); window.scrollTo(0,0); dispatch(setView(`POLICY_${t.toUpperCase()}`)); }} />;
-        case 'POLICY_RETURNS': return <PolicyView type="returns" onBack={handleGoHome} onTypeChange={(t) => { console.log('Switch to:', t); window.scrollTo(0,0); dispatch(setView(`POLICY_${t.toUpperCase()}`)); }} />;
-        case 'POLICY_PRIVACY': return <PolicyView type="privacy" onBack={handleGoHome} onTypeChange={(t) => { console.log('Switch to:', t); window.scrollTo(0,0); dispatch(setView(`POLICY_${t.toUpperCase()}`)); }} />;
-        case 'POLICY_TERMS': return <PolicyView type="terms" onBack={handleGoHome} onTypeChange={(t) => { console.log('Switch to:', t); window.scrollTo(0,0); dispatch(setView(`POLICY_${t.toUpperCase()}`)); }} />;
+            />);
+        case 'REVIEWS': return renderLazyRoute(<ReviewsPage onBack={handleGoHome} products={prods} />);
+        case 'FAQ': return renderLazyRoute(<FAQView onBack={handleGoHome} />);
+        case 'CONTACT': return renderLazyRoute(<ContactView onBack={handleGoHome} />);
+        case 'ABOUT': return renderLazyRoute(<About onBack={handleGoHome} />);
+        case 'TRACKING': return renderLazyRoute(<TrackingView onBack={handleGoHome} orders={allO} />);
+        case 'COMPARE': return renderLazyRoute(<ComparisonView compareItems={comps} onBack={handleGoHome} onRemove={(id) => dispatch(toggleCompare({ id }))} onAddToCart={handleAddToCart} onViewDetails={(p) => { dispatch(setSelectedProductId(p.id)); dispatch(setView('DETAILS')); }} />);
+        case 'POLICY_SHIPPING': return renderLazyRoute(<PolicyView type="shipping" onBack={handleGoHome} onTypeChange={(t) => { window.scrollTo(0,0); dispatch(setView(`POLICY_${t.toUpperCase()}`)); }} />);
+        case 'POLICY_RETURNS': return renderLazyRoute(<PolicyView type="returns" onBack={handleGoHome} onTypeChange={(t) => { window.scrollTo(0,0); dispatch(setView(`POLICY_${t.toUpperCase()}`)); }} />);
+        case 'POLICY_PRIVACY': return renderLazyRoute(<PolicyView type="privacy" onBack={handleGoHome} onTypeChange={(t) => { window.scrollTo(0,0); dispatch(setView(`POLICY_${t.toUpperCase()}`)); }} />);
+        case 'POLICY_TERMS': return renderLazyRoute(<PolicyView type="terms" onBack={handleGoHome} onTypeChange={(t) => { window.scrollTo(0,0); dispatch(setView(`POLICY_${t.toUpperCase()}`)); }} />);
         default:
             return <HomeView />;
     }

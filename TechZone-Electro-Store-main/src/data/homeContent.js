@@ -1,0 +1,96 @@
+import { Clock, Headphones, ShieldCheck, Truck } from 'lucide-react';
+
+export const TRUST_BADGES = [
+    {
+        icon: Truck,
+        title: "LIVRAISON GRATUITE",
+        desc: "Partout au Maroc des 2000 DH",
+        color: "text-blue-600",
+        bg: "bg-blue-50"
+    },
+    {
+        icon: ShieldCheck,
+        title: "GARANTIE PREMIUM",
+        desc: "12 mois de garantie sur chaque produit",
+        color: "text-emerald-600",
+        bg: "bg-emerald-50"
+    },
+    {
+        icon: Headphones,
+        title: "SUPPORT 24/7",
+        desc: "Un expert vous repond sur WhatsApp",
+        color: "text-indigo-600",
+        bg: "bg-indigo-50"
+    },
+    {
+        icon: Clock,
+        title: "RETOUR FACILE",
+        desc: "7 jours pour changer d'avis sans frais",
+        color: "text-rose-600",
+        bg: "bg-rose-50"
+    }
+];
+
+export const BRANDS = [
+    { name: "Apple", logo: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" },
+    { name: "Samsung", logo: "https://upload.wikimedia.org/wikipedia/commons/b/b4/Samsung_wordmark.svg" },
+    { name: "Sony", logo: "https://upload.wikimedia.org/wikipedia/commons/c/ca/Sony_logo.svg" },
+    { name: "HP", logo: "https://upload.wikimedia.org/wikipedia/commons/a/ad/HP_logo_2012.svg" },
+    { name: "Dell", logo: "https://upload.wikimedia.org/wikipedia/commons/4/48/Dell_Logo.svg" },
+    { name: "Asus", logo: "https://upload.wikimedia.org/wikipedia/commons/2/2e/ASUS_Logo.svg" }
+];
+
+export const CATEGORY_GRID = [
+    {
+        name: "Smartphones",
+        count: "45 Produits",
+        image: "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?auto=format&fit=crop&w=800&q=80",
+        span: "lg:col-span-2 lg:row-span-2",
+        color: "from-blue-600/20 to-indigo-600/40"
+    },
+    {
+        name: "Laptops",
+        count: "32 Produits",
+        image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=800&q=80",
+        span: "lg:col-span-2 lg:row-span-1",
+        color: "from-purple-600/20 to-pink-600/40"
+    },
+    {
+        name: "Tablets",
+        count: "18 Produits",
+        image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=800&q=80",
+        span: "lg:col-span-1 lg:row-span-1",
+        color: "from-amber-600/20 to-orange-600/40"
+    },
+    {
+        name: "Audio",
+        count: "28 Produits",
+        image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?auto=format&fit=crop&w=800&q=80",
+        span: "lg:col-span-1 lg:row-span-1",
+        color: "from-emerald-600/20 to-teal-600/40"
+    }
+];
+
+export const TESTIMONIALS = [
+    {
+        initials: "AR",
+        name: "Alex Rivera",
+        role: "Senior Video Editor",
+        content: "Les performances du MacBook Pro M3 ont depasse toutes mes attentes pour le montage video 8K.",
+        color: "bg-blue-50 text-blue-600"
+    },
+    {
+        initials: "SC",
+        name: "Sarah Chen",
+        role: "Software Engineer",
+        content: "Une scene sonore incroyable et une reduction de bruit bluffante.",
+        color: "bg-indigo-50 text-indigo-600"
+    },
+    {
+        initials: "MT",
+        name: "Marcus Thorne",
+        role: "Lead Product Designer",
+        content: "La qualite de fabrication est exceptionnelle. Livraison ultra rapide au Maroc.",
+        color: "bg-slate-100 text-slate-600"
+    }
+];

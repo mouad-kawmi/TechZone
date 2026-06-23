@@ -1,7 +1,7 @@
 
 import React, { useMemo, useState } from 'react';
 import { CreditCard, Landmark, Wallet, Plus, CheckCircle2, ShieldCheck, Zap } from 'lucide-react';
-import { PayPalButtons } from "@paypal/react-paypal-js";
+import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 
 const onlyDigits = (value = '') => value.replace(/\D/g, '');
 
@@ -274,24 +274,26 @@ const CheckoutPayment = ({
                         </div>
 
                         <div className="max-w-md mx-auto">
-                            <PayPalButtons
-                                style={{ layout: "vertical", shape: "pill", label: "pay" }}
-                                fundingSource="paypal"
-                                createOrder={(data, actions) => {
-                                    return actions.order.create({
-                                        purchase_units: [{
-                                            amount: {
-                                                value: (total / 10).toFixed(2), // Conversion fictive DH -> USD pour le test
-                                            },
-                                        }],
-                                    });
-                                }}
-                                onApprove={(data, actions) => {
-                                    return actions.order.capture().then((details) => {
-                                        onNext(); // Passer à l'étape suivante après succès
-                                    });
-                                }}
-                            />
+                            <PayPalScriptProvider options={{ "client-id": "test", currency: "USD" }}>
+                                <PayPalButtons
+                                    style={{ layout: "vertical", shape: "pill", label: "pay" }}
+                                    fundingSource="paypal"
+                                    createOrder={(data, actions) => {
+                                        return actions.order.create({
+                                            purchase_units: [{
+                                                amount: {
+                                                    value: (total / 10).toFixed(2), // Conversion fictive DH -> USD pour le test
+                                                },
+                                            }],
+                                        });
+                                    }}
+                                    onApprove={(data, actions) => {
+                                        return actions.order.capture().then(() => {
+                                            onNext(); // Passer a l'etape suivante apres succes
+                                        });
+                                    }}
+                                />
+                            </PayPalScriptProvider>
                         </div>
                     </div>
                 )}

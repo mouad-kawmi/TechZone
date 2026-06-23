@@ -3,7 +3,7 @@ import { ChevronRight, Home } from 'lucide-react';
 
 const Breadcrumbs = ({ paths, onHomeClick, onNavigate }) => {
     return (
-        <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-8 overflow-x-auto no-scrollbar py-2">
+        <nav aria-label="Fil d'Ariane" className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-8 overflow-x-auto no-scrollbar py-2">
             <button
                 onClick={onHomeClick}
                 className="hover:text-blue-600 transition-colors flex items-center gap-2 shrink-0 group"

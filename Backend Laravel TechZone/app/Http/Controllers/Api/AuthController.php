@@ -12,12 +12,17 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        $data = $request->validate([
-            'fullName' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:6'],
-            'phone' => ['nullable', 'string', 'max:40'],
-        ]);
+        try {
+            $data = $request->validate([
+                'fullName' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'email', 'unique:users,email'],
+                'password' => ['required', 'string', 'min:6'],
+                'phone' => ['nullable', 'string', 'max:40'],
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Register validation failed', ['errors' => $e->errors(), 'input' => $request->except('password')]);
+            throw $e;
+        }
 
         $user = User::create([
             'name' => $data['fullName'],
@@ -35,10 +40,15 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $data = $request->validate([
-            'email' => ['required', 'string'],
-            'password' => ['required', 'string'],
-        ]);
+        try {
+            $data = $request->validate([
+                'email' => ['required', 'string'],
+                'password' => ['required', 'string'],
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Login validation failed', ['errors' => $e->errors(), 'input' => $request->all()]);
+            throw $e;
+        }
 
         $login = $data['email'];
 

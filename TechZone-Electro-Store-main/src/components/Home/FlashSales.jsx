@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Timer, Zap, ArrowRight, Star, ShoppingCart } from 'lucide-react';
+import { optimizeImageUrl } from '../../utils/images';
 
 const FlashSales = ({ products = [], onAddToCart }) => {
     const { flash: config } = useSelector(state => state.banner);
@@ -74,7 +75,9 @@ const FlashSales = ({ products = [], onAddToCart }) => {
                                     </div>
                                 )}
                                 <img
-                                    src={p.image || null}
+                                    src={optimizeImageUrl(p.image, 560, 72) || null}
+                                    loading="lazy"
+                                    decoding="async"
                                     className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                                     alt={p.title}
                                 />

@@ -1,6 +1,5 @@
-import React, { useMemo, useEffect, useState, useRef } from 'react';
+import React, { Suspense, lazy, useMemo, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import Footer from './components/Layout/Footer';
 import GlobalUI from './components/Layout/GlobalUI';
 import ContentRouter from './ContentRouter';
 import useAppEffects from './hooks/useAppEffects';
@@ -15,9 +14,12 @@ import {
     fetchProducts, fetchCatalog, fetchSettings, fetchOrders, fetchMessages, fetchNotifications, updateOrderStatusBackend, addProductReview
 } from "./store";
 
+const Footer = lazy(() => import('./components/Layout/Footer'));
+
 const App = () => {
     const dispatch = useDispatch();
     const main = useRef(null);
+    const footerSentinel = useRef(null);
 
     const ui = useSelector((state) => state.ui);
     const cart = useSelector((state) => state.cart);
@@ -38,6 +40,7 @@ const App = () => {
     const [quick, setQuick] = useState(null);
     const [last, setLast] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [showFooter, setShowFooter] = useState(false);
     const syncedUserRef = useRef(null);
 
     // Initialisation
@@ -54,6 +57,33 @@ const App = () => {
         dispatch(fetchCatalog());
         dispatch(fetchSettings());
     }, [dispatch]);
+
+    useEffect(() => {
+        if (view === 'ADMIN') {
+            setShowFooter(false);
+            return undefined;
+        }
+
+        if (showFooter) return undefined;
+
+        const show = () => setShowFooter(true);
+        const sentinel = footerSentinel.current;
+
+        if (typeof window === 'undefined' || !('IntersectionObserver' in window) || !sentinel) {
+            const id = window.setTimeout(show, 3500);
+            return () => window.clearTimeout(id);
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries.some(entry => entry.isIntersecting)) {
+                show();
+                observer.disconnect();
+            }
+        }, { rootMargin: '500px 0px' });
+
+        observer.observe(sentinel);
+        return () => observer.disconnect();
+    }, [showFooter, view]);
 
     useEffect(() => {
         if (!auth.isLoggedIn || !auth.user?.id) {
@@ -236,15 +266,18 @@ const App = () => {
                 />
             </main>
 
-            {view !== 'ADMIN' && (
-                <Footer
-                    onAboutClick={() => dispatch(setView('ABOUT'))}
-                    onContactClick={() => dispatch(setView('CONTACT'))}
-                    onCategoryClick={handleCategoryClick}
-                    onPolicyClick={(v) => dispatch(setView(v === 'faq' ? 'FAQ' : `POLICY_${v.toUpperCase()}`))}
-                    onAdminClick={() => dispatch(setView('ADMIN'))}
-                    onReviewsClick={() => { dispatch(setView('REVIEWS')); window.scrollTo(0, 0); }}
-                />
+            {view !== 'ADMIN' && <div ref={footerSentinel} aria-hidden="true" className="h-px" />}
+            {view !== 'ADMIN' && showFooter && (
+                <Suspense fallback={null}>
+                    <Footer
+                        onAboutClick={() => dispatch(setView('ABOUT'))}
+                        onContactClick={() => dispatch(setView('CONTACT'))}
+                        onCategoryClick={handleCategoryClick}
+                        onPolicyClick={(v) => dispatch(setView(v === 'faq' ? 'FAQ' : `POLICY_${v.toUpperCase()}`))}
+                        onAdminClick={() => dispatch(setView('ADMIN'))}
+                        onReviewsClick={() => { dispatch(setView('REVIEWS')); window.scrollTo(0, 0); }}
+                    />
+                </Suspense>
             )}
         </div>
     );

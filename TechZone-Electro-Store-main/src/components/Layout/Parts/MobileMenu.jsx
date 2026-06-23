@@ -14,8 +14,8 @@ const MobileMenu = ({ menuOpen, setMenuOpen, items, onCategoryClick, onWishlistC
             />
             <div className={`absolute top-0 right-0 h-full w-[85%] max-w-xs bg-white dark:bg-slate-950 shadow-2xl transition-transform duration-500 ${menuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                 <div className="flex items-center justify-between p-6 border-b border-slate-50 dark:border-white/5">
-                    <h2 className="text-xl font-bold font-display uppercase tracking-tighter">Menu</h2>
-                    <button onClick={() => setMenuOpen(false)} className="size-10 rounded-xl bg-slate-50 dark:bg-white/5 flex items-center justify-center">
+                    <p className="text-xl font-bold font-display uppercase tracking-tighter">Menu</p>
+                    <button onClick={() => setMenuOpen(false)} aria-label="Fermer le menu" className="size-10 rounded-xl bg-slate-50 dark:bg-white/5 flex items-center justify-center">
                         <X className="size-5" />
                     </button>
                 </div>
@@ -41,6 +41,7 @@ const MobileMenu = ({ menuOpen, setMenuOpen, items, onCategoryClick, onWishlistC
                         <div className="grid grid-cols-2 gap-3 mb-6">
                             <button
                                 onClick={() => { onWishlistClick(); setMenuOpen(false); }}
+                                aria-label={`Ouvrir les favoris, ${wishlistCount} produit${wishlistCount > 1 ? 's' : ''}`}
                                 className="flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-50 dark:bg-white/5 gap-2"
                             >
                                 <div className="relative">
@@ -51,6 +52,7 @@ const MobileMenu = ({ menuOpen, setMenuOpen, items, onCategoryClick, onWishlistC
                             </button>
                             <button
                                 onClick={() => { onCartClick(); setMenuOpen(false); }}
+                                aria-label={`Ouvrir le panier, ${cartCount} article${cartCount > 1 ? 's' : ''}`}
                                 className="flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-950 dark:bg-white text-white dark:text-slate-950 gap-2"
                             >
                                 <div className="relative">

@@ -1,7 +1,26 @@
-import { localImages } from '../tsawer/index';
 import { DEFAULT_CATEGORY, inferCategoryFromProduct, toFixedCategory } from '../utils/catalog';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const LOCAL_PREVIEW_HOSTS = new Set(['localhost', '127.0.0.1']);
+
+const useLocalPreviewData = () => (
+  import.meta.env.PROD &&
+  typeof window !== 'undefined' &&
+  LOCAL_PREVIEW_HOSTS.has(window.location.hostname) &&
+  API_BASE_URL.includes('techzone-api.gt.tc')
+);
+
+const localPreviewSettings = {
+  name: 'TechZone Electro',
+  storeName: 'TechZone Electro',
+  email: 'contact@techzone.ma',
+  phone: '+212 600 000 000',
+  address: 'Twin Center, Casablanca',
+  deliveryFee: 25,
+  freeDeliveryThreshold: 2000,
+  currency: 'MAD',
+  maintenanceMode: false
+};
 
 const readToken = () => {
   try {
@@ -22,11 +41,6 @@ const slugify = (value = '') =>
     .replace(/\+/g, 'plus')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
-
-const localImageBySlug = Object.entries(localImages).reduce((acc, [title, images]) => {
-  acc[slugify(title)] = (images || []).filter(Boolean);
-  return acc;
-}, {});
 
 const catalogCache = {
   categories: null,
@@ -177,8 +191,7 @@ export const normalizeProduct = (product = {}) => {
     ...(Array.isArray(product.images) ? product.images : []),
     ...(Array.isArray(product.imageDetails) ? product.imageDetails.map(image => image.imageUrl) : [])
   ].filter(Boolean);
-  const fallbackImages = localImageBySlug[product.slug] || localImageBySlug[slugify(product.title)];
-  const images = [...new Set(backendImages.length > 0 ? backendImages : fallbackImages || [])];
+  const images = [...new Set(backendImages)];
   const image = images[0] || null;
   const reviewsList = product.reviewsList || product.reviews_list || [];
   const category = inferCategoryFromProduct(product);
@@ -602,6 +615,8 @@ export const api = {
   me: async () => normalizeUser(await apiRequest('/auth/me')),
 
   getProducts: async () => {
+    if (useLocalPreviewData()) return [];
+
     const data = await apiRequest('/products');
     const list = Array.isArray(data) ? data : data.content || [];
     return list.map(normalizeProduct);
@@ -609,18 +624,30 @@ export const api = {
   getProduct: async (id) => normalizeProduct(await apiRequest(`/products/${id}`)),
   uploadImage: (file, folder) => uploadImageFile(file, folder),
   getCategories: async () => {
+    if (useLocalPreviewData()) {
+      catalogCache.categories = [];
+      return [];
+    }
+
     const data = await apiRequest('/categories');
     const categories = (data || []).map(normalizeCatalogCategory);
     catalogCache.categories = categories;
     return categories;
   },
   getBrands: async () => {
+    if (useLocalPreviewData()) {
+      catalogCache.brands = [];
+      return [];
+    }
+
     const data = await apiRequest('/brands');
     const brands = (data || []).map(normalizeCatalogBrand);
     catalogCache.brands = brands;
     return brands;
   },
   getCatalog: async () => {
+    if (useLocalPreviewData()) return { categories: [], brands: [] };
+
     const [categories, brands] = await Promise.all([api.getCategories(), api.getBrands()]);
     return { categories, brands };
   },
@@ -760,7 +787,10 @@ export const api = {
     method: 'PATCH'
   })),
 
-  getSettings: async () => normalizeSettings(await apiRequest('/store-settings')),
+  getSettings: async () => {
+    if (useLocalPreviewData()) return normalizeSettings(localPreviewSettings);
+    return normalizeSettings(await apiRequest('/store-settings'));
+  },
   updateSettings: async (settings) => normalizeSettings(await apiRequest('/store-settings', {
     method: 'PATCH',
     body: {

@@ -126,7 +126,7 @@ const App = () => {
         };
 
         refreshAdminInbox();
-        const timer = window.setInterval(refreshAdminInbox, 15000);
+        const timer = window.setInterval(refreshAdminInbox, 60000);
         return () => window.clearInterval(timer);
     }, [auth.isLoggedIn, auth.user, auth.user?.role, dispatch]);
 

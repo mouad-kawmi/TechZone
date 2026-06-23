@@ -17,35 +17,24 @@ use App\Http\Controllers\Api\StoreSettingController;
 use App\Http\Controllers\Api\SupportMessageController;
 use Illuminate\Support\Facades\Route;
 
+// ==========================================
+// PUBLIC ROUTES
+// ==========================================
+
+// Auth
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
-Route::get('/auth/me', [AuthController::class, 'me']);
 
+// Catalog & Products
 Route::get('/products', [ProductController::class, 'index']);
-Route::post('/products', [ProductController::class, 'store']);
 Route::get('/products/{product}', [ProductController::class, 'show']);
-Route::match(['put', 'patch'], '/products/{product}', [ProductController::class, 'update']);
-Route::delete('/products/{product}', [ProductController::class, 'destroy']);
-Route::post('/products/{product}/images', [ProductImageController::class, 'store']);
-Route::match(['put', 'patch'], '/product-images/{image}', [ProductImageController::class, 'update']);
-Route::delete('/product-images/{image}', [ProductImageController::class, 'destroy']);
-Route::post('/products/{product}/specs', [ProductSpecController::class, 'store']);
-Route::post('/products/{product}/variants', [ProductVariantController::class, 'store']);
-Route::match(['put', 'patch'], '/product-variants/{variant}', [ProductVariantController::class, 'update']);
-Route::delete('/product-variants/{variant}', [ProductVariantController::class, 'destroy']);
+Route::get('/categories', [CatalogController::class, 'categories']);
+Route::get('/brands', [CatalogController::class, 'brands']);
+
+// Reviews
 Route::post('/products/{product}/reviews', [ReviewController::class, 'store']);
 
-Route::post('/images/upload', [ImageUploadController::class, 'store']);
-
-Route::get('/categories', [CatalogController::class, 'categories']);
-Route::post('/categories', [CatalogController::class, 'storeCategory']);
-Route::put('/categories/{category}', [CatalogController::class, 'updateCategory']);
-Route::delete('/categories/{category}', [CatalogController::class, 'deleteCategory']);
-Route::get('/brands', [CatalogController::class, 'brands']);
-Route::post('/brands', [CatalogController::class, 'storeBrand']);
-Route::put('/brands/{brand}', [CatalogController::class, 'updateBrand']);
-Route::delete('/brands/{brand}', [CatalogController::class, 'deleteBrand']);
-
+// Carts
 Route::get('/users/{userId}/cart', [CartController::class, 'show']);
 Route::post('/users/{userId}/cart/items', [CartController::class, 'addItem']);
 Route::patch('/users/{userId}/cart/items/{item}', [CartController::class, 'updateItem']);
@@ -53,29 +42,85 @@ Route::delete('/users/{userId}/cart/items/{item}', [CartController::class, 'remo
 Route::delete('/users/{userId}/cart/items', [CartController::class, 'clear']);
 Route::post('/users/{userId}/cart/merge', [CartController::class, 'mergeGuestCart']);
 
-Route::post('/coupons/validate', [CouponController::class, 'validateCoupon']);
-
-Route::get('/orders', [OrderController::class, 'index']);
-Route::get('/users/{userId}/orders', [OrderController::class, 'index']);
+// Checkout & Orders (Public tracking/checkout)
 Route::post('/checkout', [OrderController::class, 'checkout']);
 Route::post('/users/{userId}/checkout', [OrderController::class, 'checkout']);
 Route::get('/orders/track/{orderNumber}', [OrderController::class, 'track']);
-Route::match(['put', 'patch'], '/orders/{order}', [OrderController::class, 'update']);
-Route::patch('/orders/{order}/status', [OrderController::class, 'update']);
+Route::post('/coupons/validate', [CouponController::class, 'validateCoupon']);
 
-Route::get('/support/messages', [SupportMessageController::class, 'index']);
+// Support Messages (Public submission)
 Route::post('/contact/messages', [SupportMessageController::class, 'store']);
-Route::patch('/support/messages/{message}/status', [SupportMessageController::class, 'updateStatus']);
-Route::post('/support/messages/{message}/reply', [SupportMessageController::class, 'reply']);
-Route::delete('/support/messages/{message}', [SupportMessageController::class, 'destroy']);
 
-Route::get('/notifications/global', [NotificationController::class, 'index']);
-Route::get('/users/{userId}/notifications', [NotificationController::class, 'index']);
-Route::post('/notifications', [NotificationController::class, 'store']);
-Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markRead']);
-Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy']);
-
+// Store Settings (Public view)
 Route::get('/store-settings', [StoreSettingController::class, 'show']);
-Route::patch('/store-settings', [StoreSettingController::class, 'update']);
 
-Route::get('/admin/stats', [AdminStatsController::class, 'index']);
+
+// ==========================================
+// AUTHENTICATED ROUTES
+// ==========================================
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/auth/me', [AuthController::class, 'me']);
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
+    
+    // User specific routes
+    Route::get('/users/{userId}/orders', [OrderController::class, 'index']);
+    
+    // Notifications
+    Route::get('/users/{userId}/notifications', [NotificationController::class, 'index']);
+    Route::post('/notifications', [NotificationController::class, 'store']);
+    Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markRead']);
+    Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy']);
+});
+
+
+// ==========================================
+// ADMIN ROUTES
+// ==========================================
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    
+    // Admin Stats
+    Route::get('/admin/stats', [AdminStatsController::class, 'index']);
+
+    // Store Settings
+    Route::patch('/store-settings', [StoreSettingController::class, 'update']);
+
+    // Admin Products Management
+    Route::post('/products', [ProductController::class, 'store']);
+    Route::match(['put', 'patch'], '/products/{product}', [ProductController::class, 'update']);
+    Route::delete('/products/{product}', [ProductController::class, 'destroy']);
+    
+    Route::post('/products/{product}/images', [ProductImageController::class, 'store']);
+    Route::match(['put', 'patch'], '/product-images/{image}', [ProductImageController::class, 'update']);
+    Route::delete('/product-images/{image}', [ProductImageController::class, 'destroy']);
+    
+    Route::post('/products/{product}/specs', [ProductSpecController::class, 'store']);
+    Route::post('/products/{product}/variants', [ProductVariantController::class, 'store']);
+    Route::match(['put', 'patch'], '/product-variants/{variant}', [ProductVariantController::class, 'update']);
+    Route::delete('/product-variants/{variant}', [ProductVariantController::class, 'destroy']);
+
+    // Image Upload
+    Route::post('/images/upload', [ImageUploadController::class, 'store']);
+
+    // Categories & Brands
+    Route::post('/categories', [CatalogController::class, 'storeCategory']);
+    Route::put('/categories/{category}', [CatalogController::class, 'updateCategory']);
+    Route::delete('/categories/{category}', [CatalogController::class, 'deleteCategory']);
+    
+    Route::post('/brands', [CatalogController::class, 'storeBrand']);
+    Route::put('/brands/{brand}', [CatalogController::class, 'updateBrand']);
+    Route::delete('/brands/{brand}', [CatalogController::class, 'deleteBrand']);
+
+    // Orders Management
+    Route::get('/orders', [OrderController::class, 'index']);
+    Route::match(['put', 'patch'], '/orders/{order}', [OrderController::class, 'update']);
+    Route::patch('/orders/{order}/status', [OrderController::class, 'update']);
+
+    // Support Messages Management
+    Route::get('/support/messages', [SupportMessageController::class, 'index']);
+    Route::patch('/support/messages/{message}/status', [SupportMessageController::class, 'updateStatus']);
+    Route::post('/support/messages/{message}/reply', [SupportMessageController::class, 'reply']);
+    Route::delete('/support/messages/{message}', [SupportMessageController::class, 'destroy']);
+
+    // Global Notifications
+    Route::get('/notifications/global', [NotificationController::class, 'index']);
+});

@@ -55,7 +55,6 @@ class AuthController extends Controller
         $user = User::query()
             ->where('email', $login)
             ->orWhere('username', $login)
-            ->when($login === 'admin', fn ($query) => $query->orWhere('role', 'admin'))
             ->first();
 
         if (! $user || ! Hash::check($data['password'], $user->password)) {
@@ -69,15 +68,30 @@ class AuthController extends Controller
 
     public function me(Request $request)
     {
-        $user = User::first();
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
 
-        return $user?->toFrontendArray();
+        return $user->toFrontendArray();
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json(['message' => 'Logged out successfully.']);
     }
 
     private function authResponse(User $user): array
     {
+        // Delete all old personal access tokens for this user
+        $user->tokens()->delete();
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
         return [
-            'token' => 'local-token-'.$user->id,
+            'token' => $token,
             'user' => $user->toFrontendArray(),
         ];
     }

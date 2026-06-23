@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import {
     Save, Store, Mail, Phone, MapPin, ShieldCheck,
     Zap, Globe, CheckCircle2, AlertCircle, RotateCcw,
-    CreditCard, Truck, Bell, Eye
+    CreditCard, Truck, Bell, Eye, ChevronDown
 } from 'lucide-react';
 
 /* ─── Shared input field ─── */

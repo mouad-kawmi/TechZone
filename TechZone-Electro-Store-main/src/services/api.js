@@ -613,6 +613,8 @@ export const api = {
     return { ...data, user: normalizeUser(data.user) };
   },
   me: async () => normalizeUser(await apiRequest('/auth/me')),
+  logout: async () => apiRequest('/auth/logout', { method: 'POST' }),
+  getAdminStats: async () => apiRequest('/admin/stats'),
 
   getProducts: async () => {
     if (useLocalPreviewData()) return [];

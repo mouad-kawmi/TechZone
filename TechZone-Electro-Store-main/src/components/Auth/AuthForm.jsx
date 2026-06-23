@@ -95,77 +95,7 @@ const AuthForm = ({ onBack }) => {
     };
 
     const handleSubmit = (e) => {
-        e.preventDefault();
-        setIsLoading(true);
-        setLoadingAction('form');
-
-        // Simulate a small delay for realism
-        setTimeout(() => {
-            const storedUsers = JSON.parse(localStorage.getItem('tz_mock_users') || '[]');
-
-            if (isLogin) {
-                // --- ADMIN LOGIN ---
-                if (formData.email.toLowerCase() === 'admin' || formData.email === 'admin@techzone.ma') {
-                    if (formData.password === 'admin123') {
-                        const adminUser = {
-                            id: 'admin-001',
-                            username: "Admin.Elite",
-                            email: "admin@techzone.ma",
-                            role: "admin",
-                            avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=admin`
-                        };
-                        handleAuthSuccess(adminUser, true);
-                    } else {
-                        dispatch(setToast({ message: "Mot de passe Admin incorrect !", type: "error" }));
-                        setIsLoading(false);
-                        setLoadingAction(null);
-                    }
-                    return;
-                }
-
-                // --- USER LOGIN ---
-                const foundUser = storedUsers.find(u => u.email.toLowerCase() === formData.email.toLowerCase());
-
-                if (!foundUser) {
-                    dispatch(setToast({ message: "Compte introuvable. Veuillez vous inscrire.", type: "error" }));
-                } else if (foundUser.password !== formData.password) {
-                    dispatch(setToast({ message: "Mot de passe incorrect !", type: "error" }));
-                } else {
-                    handleAuthSuccess({
-                        id: foundUser.id,
-                        username: foundUser.username,
-                        email: foundUser.email,
-                        role: "user",
-                        avatar: foundUser.avatar
-                    }, true);
-                }
-            } else {
-                // --- REGISTRATION ---
-                const emailExists = storedUsers.some(u => u.email.toLowerCase() === formData.email.toLowerCase());
-                if (emailExists || formData.email.toLowerCase() === 'admin') {
-                    dispatch(setToast({ message: "Cet email est déjà utilisé !", type: "error" }));
-                } else {
-                    const newUser = {
-                        id: Math.random().toString(36).substr(2, 9),
-                        username: formData.username,
-                        email: formData.email,
-                        password: formData.password,
-                        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.email}`
-                    };
-
-                    localStorage.setItem('tz_mock_users', JSON.stringify([...storedUsers, newUser]));
-                    handleAuthSuccess({
-                        id: newUser.id,
-                        username: newUser.username,
-                        email: newUser.email,
-                        role: "user",
-                        avatar: newUser.avatar
-                    }, false);
-                }
-            }
-            setIsLoading(false);
-            setLoadingAction(null);
-        }, 1500);
+        handleBackendSubmit(e);
     };
 
     const handleAuthSuccess = (user, isLoginAction) => {

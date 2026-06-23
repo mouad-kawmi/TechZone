@@ -195,7 +195,11 @@ const HomeView = (props) => {
                 </div>
 
                 <div className="product-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-20 animate-fade-up">
-                    {displayed.length > 0 ? (
+                    {props.isLoading ? (
+                        [...Array(pageSize)].map((_, i) => (
+                            <div key={i} className="h-[400px] w-full rounded-[2rem] bg-slate-100 dark:bg-white/5 animate-pulse" />
+                        ))
+                    ) : displayed.length > 0 ? (
                         <Suspense fallback={null}>
                             {displayed.map((p) => (
                                 <div key={p.id} className="product-card-anim">

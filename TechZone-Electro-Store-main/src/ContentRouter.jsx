@@ -38,9 +38,7 @@ const ContentRouter = (props) => {
         return <PageSkeleton />;
     };
 
-    if (loading || (isCatalogPending && ['HOME', 'CATEGORY', 'SEARCH', 'DETAILS'].includes(view))) {
-        return routeSkeleton();
-    }
+    // Non-blocking skeleton rendering removed to prevent white screen
 
     const renderLazyRoute = (content) => (
         <Suspense fallback={routeSkeleton()}>
@@ -64,6 +62,7 @@ const ContentRouter = (props) => {
                 onBrandChange={(b) => dispatch(setActiveBrand(b))}
                 filteredProducts={filts}
                 allProducts={prods}
+                isLoading={isCatalogPending}
                 onViewDetails={(p) => { dispatch(setSelectedProductId(p.id)); dispatch(setView('DETAILS')); }}
                 onAddToCart={handleAddToCart}
                 onToggleWishlist={(p) => dispatch(toggleWishlist(p))}
@@ -101,6 +100,7 @@ const ContentRouter = (props) => {
                 onAddToCompare={(p) => dispatch(toggleCompare(p))}
                 wishlistItems={wishes}
                 compareItems={comps}
+                isLoading={isCatalogPending}
                 onBack={handleGoHome}
             />);
         case 'ADMIN':

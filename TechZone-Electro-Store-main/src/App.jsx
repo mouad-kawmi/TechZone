@@ -47,9 +47,7 @@ const App = () => {
     useAppEffects(dispatch, { ...ui, loading, main });
 
     useEffect(() => {
-        setLoading(true);
-        const timer = setTimeout(() => setLoading(false), 600);
-        return () => clearTimeout(timer);
+        // App view changed
     }, [view, activeCategory]);
 
     useEffect(() => {

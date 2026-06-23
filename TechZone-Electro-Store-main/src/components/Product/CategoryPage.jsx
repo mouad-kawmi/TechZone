@@ -220,7 +220,11 @@ const CategoryPage = (props) => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
-              {items.map(p => (
+              {props.isLoading ? (
+                [...Array(6)].map((_, i) => (
+                    <div key={i} className="h-[400px] w-full rounded-[2rem] bg-slate-100 dark:bg-slate-900 animate-pulse border border-slate-200 dark:border-white/5" />
+                ))
+              ) : items.length > 0 ? items.map(p => (
                 <ProductCard
                   key={p.id} product={p} onViewDetails={onViewDetails}
                   onQuickView={onQuickView} onAddToCart={onAddToCart}
@@ -228,7 +232,11 @@ const CategoryPage = (props) => {
                   isFavorite={wish.some(x => x.id === p.id)}
                   isComparing={comp.some(x => x.id === p.id)}
                 />
-              ))}
+              )) : (
+                <div className="col-span-full py-20 text-center space-y-4">
+                    <p className="text-slate-500 font-bold uppercase tracking-widest">Aucun produit trouvé</p>
+                </div>
+              )}
             </div>
 
             {/* Pagination Premium */}

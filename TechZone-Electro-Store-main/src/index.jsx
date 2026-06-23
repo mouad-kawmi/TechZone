@@ -1,27 +1,13 @@
-
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { store } from './store';
+import App from './App';
 import './index.css';
 
 const rootElement = document.getElementById('root');
-let hasBooted = false;
 
-const bootApp = async () => {
-    if (!rootElement || hasBooted) return;
-    hasBooted = true;
-
-    const [
-        React,
-        ReactDOM,
-        { Provider },
-        { store },
-        { default: App }
-    ] = await Promise.all([
-        import('react'),
-        import('react-dom/client'),
-        import('react-redux'),
-        import('./store'),
-        import('./App')
-    ]);
-
+if (rootElement) {
     const root = ReactDOM.createRoot(rootElement);
     root.render(
         <React.StrictMode>
@@ -30,19 +16,4 @@ const bootApp = async () => {
             </Provider>
         </React.StrictMode>
     );
-};
-
-if (rootElement) {
-    const triggerBoot = () => bootApp();
-    const options = { once: true, passive: true };
-    const events = ['pointerdown', 'keydown', 'wheel', 'touchstart', 'scroll'];
-
-    events.forEach(event => window.addEventListener(event, triggerBoot, options));
-
-    const idleBoot = () => {
-        events.forEach(event => window.removeEventListener(event, triggerBoot));
-        bootApp();
-    };
-
-    window.setTimeout(idleBoot, 15000);
 }
